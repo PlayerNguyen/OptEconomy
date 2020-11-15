@@ -1,0 +1,5 @@
+name: OptEconomy
+version: @version@
+api-version: 1.13
+main: com.github.playernguyen.OptEconomy
+description: The powerful economy plugin for your Spigot server
