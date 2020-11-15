@@ -1,0 +1,18 @@
+The data of OptEconomy will be declared as follows:
+
+
+    |------------------|   Cached   |----------------------|
+    | OptEconomyPlayer | ---------> | The OptEco Database  |
+    |------------------| <--------- |----------------------|
+      ^ Stored to the server
+
+    • The OptEconomyPlayer is immutable class, it is represent to Player's data.
+        This class will be cached to the server while player's online
+
+    The database establish is an class that will establish when user calls
+
+        (*) Database flow
+
+        Establish -> Make connect & grant access to SQL Server -> SQL Server Response
+           ^                                                             |
+           |-------------------- User Interface --------------------------
