@@ -2,7 +2,8 @@ package com.github.playernguyen.configurations;
 
 /**
  * The interface configuration template class.
- * This class is immutable and must be enumerable.
+ * This class is immutable and must be enumerable as a section of config.
+ *
  */
 public interface OptEconomyTemplate {
 
@@ -19,4 +20,10 @@ public interface OptEconomyTemplate {
      * @return the default declaration whether the config was not load
      */
     Object declare();
+
+    /**
+     * The comments of that section
+     * @return the comments of that section
+     */
+    String[] comments();
 }
