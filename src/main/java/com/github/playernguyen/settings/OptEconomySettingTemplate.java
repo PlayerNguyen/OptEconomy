@@ -1,6 +1,7 @@
 package com.github.playernguyen.settings;
 
 import com.github.playernguyen.configurations.OptEconomyTemplate;
+import com.github.playernguyen.storages.OptEconomyStorageType;
 
 /**
  * The setting template for the setting configuration.
@@ -15,21 +16,20 @@ public enum OptEconomySettingTemplate implements OptEconomyTemplate {
     CONNECTION_MYSQL_USERNAME("Connection.MySQL.Username", "root"),
     CONNECTION_MYSQL_PASSWORD("Connection.MySQL.Password", ""),
     CONNECTION_MYSQL_DATABASE("Connection.MySQL.Database", "opteco"),
+    CONNECTION_MYSQL_PARAMS("Connection.MySQL.Params", "useSSL=false"),
+    // General
+    GENERAL_STORAGE_TYPE("General.StorageType", OptEconomyStorageType.SQLITE.getName()),
+    GENERAL_LANGUAGE_FILE_NAME("General.LanguageFileName", "language.yml"),
 
     ;
 
     private final String path;
     private final Object declare;
-    private final String[] comments;
+
 
     OptEconomySettingTemplate(String path, Object declare) {
-        this(path, declare, null);
-    }
-
-    OptEconomySettingTemplate(String path, Object declare, String[] comments) {
         this.path = path;
         this.declare = declare;
-        this.comments = comments;
     }
 
     @Override
@@ -42,10 +42,6 @@ public enum OptEconomySettingTemplate implements OptEconomyTemplate {
         return path;
     }
 
-    @Override
-    public String[] comments() {
-        return comments;
-    }
 }
 
 

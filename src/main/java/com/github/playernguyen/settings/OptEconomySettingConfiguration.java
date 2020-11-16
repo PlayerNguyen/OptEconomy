@@ -3,7 +3,6 @@ package com.github.playernguyen.settings;
 import com.github.playernguyen.OptEconomy;
 import com.github.playernguyen.OptEconomyConstants;
 import com.github.playernguyen.configurations.OptEconomyConfiguration;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -25,4 +24,7 @@ public class OptEconomySettingConfiguration
                 null
         );
     }
+
+
+
 }

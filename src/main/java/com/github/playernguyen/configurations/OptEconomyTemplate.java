@@ -20,10 +20,4 @@ public interface OptEconomyTemplate {
      * @return the default declaration whether the config was not load
      */
     Object declare();
-
-    /**
-     * The comments of that section
-     * @return the comments of that section
-     */
-    String[] comments();
 }
