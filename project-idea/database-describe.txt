@@ -16,3 +16,7 @@ The data of OptEconomy will be declared as follows:
         Establish -> Make connect & grant access to SQL Server -> SQL Server Response
            ^                                                             |
            |-------------------- User Interface --------------------------
+
+# <Establish> ---- Establish  ---->> <Database> ---- Execute queries --->> <Manager>
+
+---- store and manage data --->

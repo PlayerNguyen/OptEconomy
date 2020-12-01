@@ -1,16 +1,26 @@
 package com.github.playernguyen;
 
+import com.github.playernguyen.databases.OptEconomyDatabaseSQLite;
+import com.github.playernguyen.databases.OptEconomyDatabases;
+import com.github.playernguyen.databases.OptEconomyDatabasesMySQL;
 import com.github.playernguyen.establishs.OptEconomySQLEstablish;
 import com.github.playernguyen.establishs.OptEconomySQLEstablishMySQL;
 import com.github.playernguyen.establishs.OptEconomySQLEstablishSQLite;
 import com.github.playernguyen.exceptions.InvalidStorageTypeException;
 import com.github.playernguyen.localizes.OptEconomyLocalizeConfiguration;
+import com.github.playernguyen.players.OptEconomyPlayerManager;
+import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManager;
+import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManagerMySQL;
+import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManagerSQLite;
 import com.github.playernguyen.settings.OptEconomySettingConfiguration;
 import com.github.playernguyen.settings.OptEconomySettingTemplate;
 import com.github.playernguyen.storages.OptEconomyStorageType;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * The main class for OptEconomy
@@ -24,6 +34,9 @@ public final class OptEconomy extends JavaPlugin {
     private OptEconomySettingConfiguration settingConfiguration;
     private OptEconomySQLEstablish establish;
     private OptEconomyLocalizeConfiguration localizeConfiguration;
+    private OptEconomyDatabases databases;
+    private OptEconomyPlayerStorageManager playerStorageManager;
+    private OptEconomyPlayerManager playerManager;
 
     /**
      * Enable function
@@ -35,14 +48,59 @@ public final class OptEconomy extends JavaPlugin {
             setupSetting();
             setupLocalize();
             setupEstablish();
-
+            setupDatabases();
+            setupPlayers();
         } catch (Exception e) {
-            // Notice the Severe to user interface
+            // Notice the Severe to user interface when catch error
             this.getLogger().severe("Unexpected error - Disable the plugin");
             // Print the exception
             e.printStackTrace();
             // Disable the plugin
             this.getPluginLoader().disablePlugin(this);
+        }
+    }
+
+    private void setupPlayers() {
+        // Player storage manager set up
+        if (playerStorageManager == null) {
+            switch (getStorageType()) {
+                case MYSQL: {
+                    this.playerStorageManager = new OptEconomyPlayerStorageManagerMySQL(this.getDatabases());
+                    break;
+                }
+                case SQLITE: {
+                    this.playerStorageManager = new OptEconomyPlayerStorageManagerSQLite(this.getDatabases());
+                    break;
+                }
+            }
+        }
+        // Player manager set up
+        if (playerManager == null) {
+            this.playerManager = new OptEconomyPlayerManager(this);
+        } else {
+            playerManager.collection().clear();
+        }
+    }
+
+    private void setupDatabases() throws InvalidStorageTypeException, SQLException {
+        OptEconomyStorageType storageType = this.getStorageType();
+        // Whether null, handle otherwise
+        if (storageType == null) {
+            throw new InvalidStorageTypeException(
+                    "Cannot found the storage type: " +
+                            this.settingConfiguration.get(OptEconomySettingTemplate.GENERAL_STORAGE_TYPE)
+            );
+        } else {
+            switch (storageType) {
+                case SQLITE: {
+                    this.databases = new OptEconomyDatabaseSQLite(this, this.getEstablish());
+                    break;
+                }
+                case MYSQL: {
+                    this.databases = new OptEconomyDatabasesMySQL(this, this.getEstablish());
+                    break;
+                }
+            }
         }
     }
 
@@ -64,19 +122,23 @@ public final class OptEconomy extends JavaPlugin {
      *
      * @throws InvalidStorageTypeException invalid storage type in configuration
      */
-    private void setupEstablish() throws InvalidStorageTypeException, ClassNotFoundException {
-        String storageType = (String) getSettingConfiguration().get(OptEconomySettingTemplate.GENERAL_STORAGE_TYPE);
-        OptEconomyStorageType fromString = OptEconomyStorageType.getTypeFromString(storageType);
+    private void setupEstablish() throws Exception {
+        OptEconomyStorageType storageType = this.getStorageType();
         // Whether null, handle otherwise
-        if (fromString == null) {
-            throw new InvalidStorageTypeException("Cannot found the storage type: " + storageType);
+        if (storageType == null) {
+            throw new InvalidStorageTypeException("Cannot found the storage type: "
+                    + this.settingConfiguration.get(OptEconomySettingTemplate.GENERAL_STORAGE_TYPE)
+            );
         } else {
-            switch (fromString) {
+            this.getLogger().info("Select storage type: " + storageType.toString());
+            switch (storageType) {
                 case SQLITE: {
                     this.establish = new OptEconomySQLEstablishSQLite(this);
+                    break;
                 }
                 case MYSQL: {
                     this.establish = new OptEconomySQLEstablishMySQL(this);
+                    break;
                 }
             }
         }
@@ -131,5 +193,30 @@ public final class OptEconomy extends JavaPlugin {
      */
     public OptEconomyLocalizeConfiguration getLocalizeConfiguration() {
         return localizeConfiguration;
+    }
+
+    /**
+     * Get the storage type which configured in the configuration
+     * @return the storage type which configured in the configuration
+     */
+    private OptEconomyStorageType getStorageType() {
+        String storageType = (String) getSettingConfiguration().get(OptEconomySettingTemplate.GENERAL_STORAGE_TYPE);
+        return OptEconomyStorageType.getTypeFromString(storageType);
+    }
+
+    /**
+     * The databases of player to get and interact with database server
+     * @return the {@link OptEconomyDatabases} class
+     */
+    public OptEconomyDatabases getDatabases() {
+        return databases;
+    }
+
+    /**
+     * Get storage manager of Player which linked to the server
+     * @return the storage manager of player which linked to the server
+     */
+    public OptEconomyPlayerStorageManager getPlayerStorageManager() {
+        return playerStorageManager;
     }
 }

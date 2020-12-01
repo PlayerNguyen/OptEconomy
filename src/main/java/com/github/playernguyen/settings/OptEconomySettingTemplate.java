@@ -10,17 +10,21 @@ public enum OptEconomySettingTemplate implements OptEconomyTemplate {
 
 
     DEVELOPER_DEBUG("Developer.Debug", false),
-    // Connection
+    // Connections
     CONNECTION_MYSQL_HOST("Connection.MySQL.Host", "localhost"),
     CONNECTION_MYSQL_PORT("Connection.MySQL.Port", "3306"),
     CONNECTION_MYSQL_USERNAME("Connection.MySQL.Username", "root"),
     CONNECTION_MYSQL_PASSWORD("Connection.MySQL.Password", ""),
     CONNECTION_MYSQL_DATABASE("Connection.MySQL.Database", "opteco"),
     CONNECTION_MYSQL_PARAMS("Connection.MySQL.Params", "useSSL=false"),
-    // General
-    GENERAL_STORAGE_TYPE("General.StorageType", OptEconomyStorageType.SQLITE.getName()),
-    GENERAL_LANGUAGE_FILE_NAME("General.LanguageFileName", "language.yml"),
 
+    CONNECTION_TABLES_OPTECONOMY("Connection.Tables.OptEco", "opteco"),
+    // Generals
+    GENERAL_STORAGE_TYPE("General.StorageType", OptEconomyStorageType.SQLITE.getName()),
+    GENERAL_SQLITE_FILENAME("General.SQLite.Filename", "Data.db"),
+    GENERAL_LANGUAGE_FILE_NAME("General.LanguageFileName", "Language.yml"),
+    // Options
+    OPTIONS_CACHE_STORAGE_DURATION("Options.CacheStorageDuration", 500),
     ;
 
     private final String path;
@@ -41,6 +45,7 @@ public enum OptEconomySettingTemplate implements OptEconomyTemplate {
     public String path() {
         return path;
     }
+
 
 }
 

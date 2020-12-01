@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Configuration class to init, set-up the configuration items
@@ -73,10 +74,10 @@ public class OptEconomyConfiguration<T extends OptEconomyTemplate> {
      * @param key the key in template
      * @return the Object class of {@link T#path()}
      */
-    @Nullable
+    @NotNull
     public Object get(@NotNull T key) {
         Preconditions.checkNotNull(key);
-        return this.fileConfiguration.get(key.path());
+        return Objects.requireNonNull(this.fileConfiguration.get(key.path()));
     }
 
 

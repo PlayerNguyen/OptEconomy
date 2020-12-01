@@ -5,9 +5,9 @@ import com.github.playernguyen.OptEconomyConstants;
 import com.github.playernguyen.objects.OptEconomyString;
 import com.github.playernguyen.settings.OptEconomySettingTemplate;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The MySQL establish which inherit from the {@link OptEconomySQLEstablish} class.
@@ -16,10 +16,14 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
 
     private final OptEconomy instance;
 
-    public OptEconomySQLEstablishMySQL(OptEconomy instance) throws ClassNotFoundException {
+    public OptEconomySQLEstablishMySQL(OptEconomy instance) throws ClassNotFoundException, SQLException {
         this.instance = instance;
         // Init the driver
         Class.forName(OptEconomyConstants.MYSQL_DRIVER_MANAGER);
+        // Open test connection
+        instance.getLogger().info("Open the test connection...");
+        this.openConnection();
+        instance.getLogger().info("SUCCEED - MySQL");
     }
 
     @Override
@@ -42,6 +46,31 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
                 .replace("%port%", port)
                 .replace("%database%", database)
                 .replace("%params%", params);
-        return DriverManager.getConnection(url.toString());
+        String username = (String) instance.getSettingConfiguration()
+                .get(OptEconomySettingTemplate.CONNECTION_MYSQL_USERNAME);
+        String password = (String) instance.getSettingConfiguration()
+                .get(OptEconomySettingTemplate.CONNECTION_MYSQL_PASSWORD);
+        return DriverManager.getConnection(url.toString(), username, password);
+    }
+
+    @Override
+    public List<String> tableList() throws SQLException {
+        try (Connection connection = this.openConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("SHOW TABLES;");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<String> list = new ArrayList<>();
+            // Iterate the resultSet then put to the table
+            while (resultSet.next()) {
+                list.add(resultSet.getString(1));
+            }
+            // Return a list
+            return list;
+        }
+    }
+
+    @Override
+    public String tableName() {
+        return (String) instance.getSettingConfiguration().get(
+                OptEconomySettingTemplate.CONNECTION_TABLES_OPTECONOMY);
     }
 }

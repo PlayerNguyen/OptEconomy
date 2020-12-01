@@ -1,6 +1,5 @@
 package com.github.playernguyen.storages;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -35,10 +34,17 @@ public enum OptEconomyStorageType {
      * @return the storage type object, null otherwise
      */
     @Nullable
-    public static OptEconomyStorageType getTypeFromString(Object s) {
+    public static OptEconomyStorageType getTypeFromString(String s) {
         for (OptEconomyStorageType value : OptEconomyStorageType.values()) {
-            if (value.name.equalsIgnoreCase(s)) { return value; }
+            if (value.name.equalsIgnoreCase(s)) {
+                return value;
+            }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
