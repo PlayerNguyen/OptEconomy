@@ -10,5 +10,8 @@ public class OptEconomyConstants {
 
     public static final char COLOUR_CHAR = '&';
 
+    public static final String DEBUG_FILE_NAME = "Debug.profile";
 
+
+    public static final String LOGGER_PREFIX = "&7[&aOptEconomy&7] &r";
 }

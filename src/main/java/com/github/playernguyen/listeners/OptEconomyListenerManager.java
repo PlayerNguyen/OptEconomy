@@ -28,6 +28,10 @@ public class OptEconomyListenerManager extends OptEconomyManagerList<OptEconomyA
         Bukkit.getPluginManager().registerEvents(item, instance);
     }
 
+    /**
+     * Un-register item
+     * @param item the listener item to unregister
+     */
     public void unregister(OptEconomyAbstractListener item) {
         // Unregister
         HandlerList.unregisterAll(item);

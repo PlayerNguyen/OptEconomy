@@ -17,8 +17,9 @@ import java.util.Objects;
  * @param <T> the template type. This template is necessary for the configuration object
  *            because configuration object will use this as default value
  */
-public class OptEconomyConfiguration<T extends OptEconomyTemplate> {
+public abstract class OptEconomyConfiguration<T extends OptEconomyTemplate> {
 
+    private final OptEconomy instance;
     private final File file;
     private FileConfiguration fileConfiguration;
 
@@ -33,6 +34,7 @@ public class OptEconomyConfiguration<T extends OptEconomyTemplate> {
      * @see OptEconomyConfiguration#save()
      */
     public OptEconomyConfiguration(OptEconomy instance, String name, T[] declarers, @Nullable String parent) throws IOException {
+        this.instance = instance;
         // Create data folder
         File dataFolder = instance.getDataFolder();
         if (!dataFolder.exists() && !dataFolder.mkdir()) {
@@ -58,6 +60,9 @@ public class OptEconomyConfiguration<T extends OptEconomyTemplate> {
      * Reload the configuration class (reload)
      */
     public void reload() {
+        instance.getDebugger().info(String.format(
+                "Loading FileConfiguration from %s", this.file.getPath()
+        ));
         this.fileConfiguration = YamlConfiguration.loadConfiguration(this.file);
     }
 
@@ -66,6 +71,9 @@ public class OptEconomyConfiguration<T extends OptEconomyTemplate> {
      * @throws IOException cannot save the configuration file
      */
     public void save() throws IOException {
+        instance.getDebugger().info(String.format(
+                "Saving <%s> (%s)", this.getClass().getSimpleName(), this.file.getPath()
+        ));
         this.fileConfiguration.save(this.file);
     }
 
@@ -74,11 +82,30 @@ public class OptEconomyConfiguration<T extends OptEconomyTemplate> {
      * @param key the key in template
      * @return the Object class of {@link T#path()}
      */
-    @NotNull
     public Object get(@NotNull T key) {
         Preconditions.checkNotNull(key);
+        instance.getDebugger().info(String.format(
+                "Getting %s <%s>", key.path(), this.getClass().getSimpleName()
+        ));
         return Objects.requireNonNull(this.fileConfiguration.get(key.path()));
     }
 
+    /**
+     * Get the configured object as boolean cast
+     * @param key the key in template
+     * @return the Boolean object which was configured
+     */
+    public boolean getBoolean(@NotNull T key) {
+        return (Boolean) get(key);
+    }
+
+    /**
+     * Get the configured object as string cast
+     * @param key the key in template key
+     * @return the String object which was configured
+     */
+    public String getString(@NotNull T key) {
+        return (String) get(key);
+    }
 
 }

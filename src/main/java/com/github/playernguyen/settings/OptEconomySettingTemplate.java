@@ -8,8 +8,8 @@ import com.github.playernguyen.storages.OptEconomyStorageType;
  */
 public enum OptEconomySettingTemplate implements OptEconomyTemplate {
 
-
-    DEVELOPER_DEBUG("Developer.Debug", false),
+//      Change to Debug.profile
+//    DEVELOPER_DEBUG("Developer.Debug", false),
     // Connections
     CONNECTION_MYSQL_HOST("Connection.MySQL.Host", "localhost"),
     CONNECTION_MYSQL_PORT("Connection.MySQL.Port", "3306"),

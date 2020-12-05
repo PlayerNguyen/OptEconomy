@@ -1,5 +1,6 @@
 package com.github.playernguyen.players.storages;
 
+import com.github.playernguyen.OptEconomy;
 import com.github.playernguyen.databases.OptEconomyDatabases;
 
 /**
@@ -7,8 +8,8 @@ import com.github.playernguyen.databases.OptEconomyDatabases;
  */
 public class OptEconomyPlayerStorageManagerSQLite extends OptEconomyPlayerStorageManager {
 
-    public OptEconomyPlayerStorageManagerSQLite(OptEconomyDatabases databases) {
-        super(databases);
+    public OptEconomyPlayerStorageManagerSQLite(OptEconomy ins, OptEconomyDatabases databases) {
+        super(ins, databases);
     }
 
 

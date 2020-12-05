@@ -21,9 +21,8 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
         // Init the driver
         Class.forName(OptEconomyConstants.MYSQL_DRIVER_MANAGER);
         // Open test connection
-        instance.getLogger().info("Open the test connection...");
+        instance.getDebugger().warning("Open the SQL connection to test");
         this.openConnection();
-        instance.getLogger().info("SUCCEED - MySQL");
     }
 
     @Override
@@ -50,6 +49,10 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_USERNAME);
         String password = (String) instance.getSettingConfiguration()
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_PASSWORD);
+        instance.getDebugger().info(String.format(
+                "Open connection in %s", this.getClass().getName()
+        ));
+        // Return the connection
         return DriverManager.getConnection(url.toString(), username, password);
     }
 

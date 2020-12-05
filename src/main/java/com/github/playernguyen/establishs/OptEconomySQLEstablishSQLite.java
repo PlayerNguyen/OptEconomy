@@ -27,10 +27,10 @@ public class OptEconomySQLEstablishSQLite implements OptEconomySQLEstablish {
                 (String) instance.getSettingConfiguration().get(OptEconomySettingTemplate.GENERAL_SQLITE_FILENAME)
         ).getPath();
         this.url = OptEconomyConstants.JDBC_SQLITE_DRIVER_URL.replace("%path%", path);
-        // Open connection
-        instance.getLogger().info("Open test connection...");
+        // Open connection to test
+        instance.getDebugger().warning("Open the SQL connection to test");
         this.openConnection();
-        instance.getLogger().info("SUCCEED - SQLite");
+
     }
 
     @Override
@@ -41,7 +41,8 @@ public class OptEconomySQLEstablishSQLite implements OptEconomySQLEstablish {
     @Override
     public List<String> tableList() throws SQLException {
         Connection connection = this.openConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM sqlite_master WHERE type='table' AND NAME NOT LIKE 'sqlite_%'");
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT * FROM sqlite_master WHERE type='table' AND NAME NOT LIKE 'sqlite_%'");
         ResultSet resultSet = preparedStatement.executeQuery();
 
         List<String> tableList = new LinkedList<>();

@@ -7,5 +7,11 @@
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306/opteco</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="SQLite - Data.db" uuid="25e8872a-9ca8-444a-8553-51a7943d37eb">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$USER_HOME$/Desktop/server/1.12.2-papermc/plugins/OptEconomy/Data.db</jdbc-url>
+    </data-source>
   </component>
 </project>
