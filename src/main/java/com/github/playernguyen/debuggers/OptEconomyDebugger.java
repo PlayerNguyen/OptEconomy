@@ -26,6 +26,10 @@ public class OptEconomyDebugger {
         }
     }
 
+    /**
+     * Print the text
+     * @param string the string to be printed
+     */
     public void logOut(String string) {
         if (debuggerActiveFile.exists()) {
             Bukkit.getConsoleSender().sendMessage(

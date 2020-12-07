@@ -1,7 +1,7 @@
 package com.github.playernguyen.listeners;
 
 import com.github.playernguyen.OptEconomy;
-import com.github.playernguyen.loggers.OptEconomyExceptionThrower;
+import com.github.playernguyen.loggers.OptEconomyExceptionCatcher;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -36,7 +36,7 @@ public class OptEconomyPlayerListener extends OptEconomyAbstractListener {
         try {
             this.getInstance().getPlayerManager().get(event.getPlayer().getUniqueId());
         } catch (SQLException e) {
-            OptEconomyExceptionThrower.throwException(e);
+            OptEconomyExceptionCatcher.stackTrace(e);
         }
     }
 
@@ -54,7 +54,7 @@ public class OptEconomyPlayerListener extends OptEconomyAbstractListener {
         try {
             this.getInstance().getPlayerManager().removePlayer(event.getPlayer().getUniqueId());
         } catch (SQLException e) {
-            OptEconomyExceptionThrower.throwException(e);
+            OptEconomyExceptionCatcher.stackTrace(e);
         }
     }
 }

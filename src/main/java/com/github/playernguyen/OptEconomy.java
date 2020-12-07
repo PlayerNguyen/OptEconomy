@@ -1,5 +1,7 @@
 package com.github.playernguyen;
 
+import com.github.playernguyen.apis.OptEconomyAPIManager;
+import com.github.playernguyen.apis.OptEconomyPluginPlaceholderAPI;
 import com.github.playernguyen.databases.OptEconomyDatabaseSQLite;
 import com.github.playernguyen.databases.OptEconomyDatabases;
 import com.github.playernguyen.databases.OptEconomyDatabasesMySQL;
@@ -8,20 +10,24 @@ import com.github.playernguyen.establishs.OptEconomySQLEstablish;
 import com.github.playernguyen.establishs.OptEconomySQLEstablishMySQL;
 import com.github.playernguyen.establishs.OptEconomySQLEstablishSQLite;
 import com.github.playernguyen.exceptions.InvalidStorageTypeException;
+import com.github.playernguyen.exceptions.PluginNotFoundException;
 import com.github.playernguyen.listeners.OptEconomyAbstractListener;
 import com.github.playernguyen.listeners.OptEconomyListenerManager;
 import com.github.playernguyen.listeners.OptEconomyPlayerListener;
 import com.github.playernguyen.localizes.OptEconomyLocalizeConfiguration;
-import com.github.playernguyen.loggers.OptEconomyExceptionThrower;
+import com.github.playernguyen.loggers.OptEconomyExceptionCatcher;
 import com.github.playernguyen.loggers.OptEconomyLogger;
 import com.github.playernguyen.players.OptEconomyPlayerManager;
 import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManager;
 import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManagerMySQL;
 import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManagerSQLite;
+import com.github.playernguyen.runnables.OptEconomyRunnableVacuum;
 import com.github.playernguyen.settings.OptEconomySettingConfiguration;
 import com.github.playernguyen.settings.OptEconomySettingTemplate;
 import com.github.playernguyen.storages.OptEconomyStorageType;
+import com.github.playernguyen.vacuums.OptEconomyVacuum;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -46,6 +52,8 @@ public final class OptEconomy extends JavaPlugin {
     private OptEconomyPlayerStorageManager playerStorageManager;
     private OptEconomyPlayerManager playerManager;
     private OptEconomyListenerManager listenerManager;
+    private OptEconomyAPIManager APIManager;
+    private OptEconomyRunnableVacuum runnableVacuum;
 
     /**
      * Enable function
@@ -53,23 +61,46 @@ public final class OptEconomy extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
-            setupLogger();
-            setupInstance();
-            setupDebugger();
-            setupSetting();
-            setupLocalize();
-            setupEstablish();
-            setupDatabases();
-            setupPlayers();
-            setupListener();
+            this.setupLogger();
+            this.setupInstance();
+            this.setupDebugger();
+            this.setupSetting();
+            this.setupLocalize();
+            this.setupEstablish();
+            this.setupDatabases();
+            this.setupPlayers();
+            this.setupListener();
+            this.setupDependencies();
+            this.setupVacuum();
         } catch (Exception e) {
             // Notice the Severe to user interface when catch error
             this.getOptLogger().error("Disable the plugin because of error: ");
             // Print the exception
-            OptEconomyExceptionThrower.throwException(e);
+            OptEconomyExceptionCatcher.stackTrace(e);
             // Disable the plugin
             this.getPluginLoader().disablePlugin(this);
         }
+    }
+
+    private void setupVacuum() {
+        if (this.runnableVacuum == null) {
+            this.runnableVacuum = new OptEconomyRunnableVacuum(this, new OptEconomyVacuum(this));
+        } else {
+            this.runnableVacuum.cancel();
+        }
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, this.runnableVacuum, 0, 0);
+    }
+
+    private void setupDependencies() throws PluginNotFoundException {
+        if (this.APIManager == null) {
+            this.APIManager = new OptEconomyAPIManager(this);
+        } else {
+            this.APIManager.clear();
+        }
+        // Register item
+        this.APIManager.register(OptEconomyConstants.PLUGIN_NAME_PLACEHOLDER_API, new OptEconomyPluginPlaceholderAPI(
+                this)
+        );
     }
 
     /**
@@ -77,6 +108,7 @@ public final class OptEconomy extends JavaPlugin {
      */
     private void setupLogger() {
         this.logger = new OptEconomyLogger();
+        this.logger.good(ChatColor.AQUA + "OptEconomy v." + this.getDescription().getVersion());
     }
 
     /**
@@ -237,7 +269,8 @@ public final class OptEconomy extends JavaPlugin {
      * @return the current instance of OptEconomy
      */
     public static OptEconomy inst() {
-        System.out.println("Some plugin call OptEconomy outside (leaking databases information warning)");
+//        System.out.println("[OptEconomy] " +
+//                "Some plugin call OptEconomy outside (leaking databases information warning)");
         return instance;
     }
 
@@ -317,5 +350,13 @@ public final class OptEconomy extends JavaPlugin {
      */
     public OptEconomyLogger getOptLogger() {
         return this.logger;
+    }
+
+    /**
+     * API Manager
+     * @return the API Manager class
+     */
+    public OptEconomyAPIManager getAPIManager() {
+        return APIManager;
     }
 }

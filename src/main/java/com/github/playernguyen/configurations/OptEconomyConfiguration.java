@@ -9,7 +9,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.TreeSet;
 
 /**
  * Configuration class to init, set-up the configuration items
@@ -47,7 +50,9 @@ public abstract class OptEconomyConfiguration<T extends OptEconomyTemplate> {
         this.file = new File(parentFolder, name);
         this.fileConfiguration = YamlConfiguration.loadConfiguration(this.file);
         // Load with loader
-        for (T declarer : declarers) {
+        List<T> list = Arrays.asList(declarers);
+        list.sort((o1, o2) -> o1.path().compareToIgnoreCase(o2.path()));
+        for (T declarer : list) {
             if (!this.fileConfiguration.contains(declarer.path())) {
                 this.fileConfiguration.set(declarer.path(), declarer.declare());
             }

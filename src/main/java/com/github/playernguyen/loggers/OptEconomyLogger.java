@@ -15,7 +15,7 @@ public class OptEconomyLogger {
 
     /**
      * Function to print a string out. This is private access function
-     * @param string the string to print
+     * @param string a string to print
      */
     private void print(String string) {
         Bukkit.getConsoleSender().sendMessage(
@@ -25,7 +25,7 @@ public class OptEconomyLogger {
 
     /**
      * Warning to the logger (console)
-     * @param string the string to be warned
+     * @param string a string to be warned
      */
     public void warn(String string) {
         this.print(ChatColor.YELLOW + string);
@@ -33,7 +33,7 @@ public class OptEconomyLogger {
 
     /**
      * Info level to print
-     * @param string the string to announce
+     * @param string a string to announce
      */
     public void info(String string) {
         this.print(ChatColor.GRAY + string);
@@ -42,7 +42,7 @@ public class OptEconomyLogger {
 
     /**
      * The critical error level print function
-     * @param string the string to served
+     * @param string a string to served
      */
     public void error(String string) {
         this.print(ChatColor.RED + string);
@@ -50,11 +50,18 @@ public class OptEconomyLogger {
 
     /**
      * A normal level print function
-     * @param string the string to print out
+     * @param string a string to print out
      */
     public void normal(String string) {
         this.print(ChatColor.RESET + string);
     }
 
+    /**
+     * Print a good string
+     * @param string a string to print out
+     */
+    public void good(String string) {
+        this.print(ChatColor.GREEN + string);
+    }
 
 }

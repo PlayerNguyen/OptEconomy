@@ -14,4 +14,5 @@ public class OptEconomyConstants {
 
 
     public static final String LOGGER_PREFIX = "&7[&aOptEconomy&7] &r";
+    public static final String PLUGIN_NAME_PLACEHOLDER_API = "PlaceholderAPI";
 }

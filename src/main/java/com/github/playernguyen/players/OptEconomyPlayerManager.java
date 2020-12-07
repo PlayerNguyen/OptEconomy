@@ -3,7 +3,6 @@ package com.github.playernguyen.players;
 import com.github.playernguyen.OptEconomy;
 import com.github.playernguyen.manager.OptEconomyManagerList;
 import com.github.playernguyen.settings.OptEconomySettingTemplate;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -43,7 +42,7 @@ public class OptEconomyPlayerManager extends OptEconomyManagerList<OptEconomyPla
         } else {
             if ((System.currentTimeMillis() - player.getLastUpdated()) >
                     (long) instance
-                            .getSettingConfiguration().get(OptEconomySettingTemplate.OPTIONS_CACHE_STORAGE_DURATION
+                            .getSettingConfiguration().get(OptEconomySettingTemplate.CACHE_STORAGE_DURATION
                             )) {
                 this.updatePlayer(uuid);
             }
@@ -54,12 +53,12 @@ public class OptEconomyPlayerManager extends OptEconomyManagerList<OptEconomyPla
     }
 
     /**
-     * Update the player
+     * Force OptEconomy to update player
      *
      * @param uuid the player uuid
      * @throws SQLException throw whether cannot get player in data
      */
-    private void updatePlayer(UUID uuid) throws SQLException {
+    public void updatePlayer(UUID uuid) throws SQLException {
         // Remove player
         this.collection().removeIf(ele -> ele.getUniqueId().equals(uuid));
         // Post new player

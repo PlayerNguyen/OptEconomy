@@ -7,9 +7,9 @@ import org.bukkit.command.ConsoleCommandSender;
 /**
  * The class to catch the exception and then throw it more colorful
  */
-public class OptEconomyExceptionThrower {
+public class OptEconomyExceptionCatcher {
 
-    public static void throwException(Exception exception) {
+    public static void stackTrace(Exception exception) {
         ConsoleCommandSender consoleSender = Bukkit.getConsoleSender();
 
         // Send it more colorful

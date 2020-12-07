@@ -40,7 +40,7 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
         String params = (String) instance
                 .getSettingConfiguration()
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_PARAMS);
-        OptEconomyString url = new OptEconomyString(OptEconomyConstants.JDBC_DRIVER_URL)
+        OptEconomyString url = new OptEconomyString(instance, OptEconomyConstants.JDBC_DRIVER_URL)
                 .replace("%host%", host)
                 .replace("%port%", port)
                 .replace("%database%", database)
@@ -52,6 +52,7 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
         instance.getDebugger().info(String.format(
                 "Open connection in %s", this.getClass().getName()
         ));
+
         // Return the connection
         return DriverManager.getConnection(url.toString(), username, password);
     }

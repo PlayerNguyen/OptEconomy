@@ -24,7 +24,10 @@ public enum OptEconomySettingTemplate implements OptEconomyTemplate {
     GENERAL_SQLITE_FILENAME("General.SQLite.Filename", "Data.db"),
     GENERAL_LANGUAGE_FILE_NAME("General.LanguageFileName", "Language.yml"),
     // Options
-    OPTIONS_CACHE_STORAGE_DURATION("Options.CacheStorageDuration", 500),
+    CACHE_STORAGE_DURATION("CacheStorageDuration", 500),
+    VACUUM_CACHE_UPDATE_DURATION("Vacuum.Duration", 500),
+    // Command
+    COMMAND_TAB_COMPLETION("Command.TabCompletion", true)
     ;
 
     private final String path;
