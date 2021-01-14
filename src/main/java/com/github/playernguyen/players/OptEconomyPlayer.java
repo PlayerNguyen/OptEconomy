@@ -1,5 +1,6 @@
 package com.github.playernguyen.players;
 
+import com.github.playernguyen.databases.OptEconomyObject;
 import com.github.playernguyen.objects.OptEconomyDouble;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,7 +9,7 @@ import java.util.UUID;
 /**
  * The player class represent the data of Player.
  */
-public class OptEconomyPlayer implements Comparable<OptEconomyPlayer> {
+public class OptEconomyPlayer implements Comparable<OptEconomyPlayer>, OptEconomyObject {
 
     /**
      * The immutable identify for object
@@ -80,6 +81,7 @@ public class OptEconomyPlayer implements Comparable<OptEconomyPlayer> {
 
     /**
      * Get unique id of this player which immutable
+     *
      * @return the unique id of this player
      */
     public UUID getUniqueId() {
@@ -88,10 +90,12 @@ public class OptEconomyPlayer implements Comparable<OptEconomyPlayer> {
 
     /**
      * Adapter from old player
+     *
      * @param player the player to be converted
      * @return the new player
      */
     public OptEconomyPlayer from(OptEconomyPlayer player) {
         return new OptEconomyPlayer(player.getUniqueId(), player.getBalance(), player.getLastUpdated());
     }
+
 }

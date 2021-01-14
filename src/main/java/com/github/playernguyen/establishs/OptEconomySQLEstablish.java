@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * The class establish is an class that will establish SQL connection
+ * The class-establish is an class that will establish SQL connection
  * when user calls.
  */
 public interface OptEconomySQLEstablish {
@@ -19,15 +19,4 @@ public interface OptEconomySQLEstablish {
      */
     Connection openConnection() throws SQLException;
 
-//    /**
-//     * Show the table list
-//     * @return the table list as {@link List}
-//     */
-//    List<String> tableList() throws SQLException;
-
-//    /**
-//     * The name of table in configuration
-//     * @return the name of table
-//     */
-//    String tableName();
 }

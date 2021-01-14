@@ -28,16 +28,16 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
     @Override
     public Connection openConnection() throws SQLException {
         // Init the driver
-        String host = (String) instance
+        String host = instance
                 .getSettingConfiguration()
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_HOST);
-        String port = (String) instance
+        String port = instance
                 .getSettingConfiguration()
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_PORT);
-        String database = (String) instance
+        String database = instance
                 .getSettingConfiguration()
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_DATABASE);
-        String params = (String) instance
+        String params = instance
                 .getSettingConfiguration()
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_PARAMS);
         OptEconomyString url = new OptEconomyString(instance, OptEconomyConstants.JDBC_DRIVER_URL)
@@ -45,9 +45,9 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
                 .replace("%port%", port)
                 .replace("%database%", database)
                 .replace("%params%", params);
-        String username = (String) instance.getSettingConfiguration()
+        String username = instance.getSettingConfiguration()
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_USERNAME);
-        String password = (String) instance.getSettingConfiguration()
+        String password = instance.getSettingConfiguration()
                 .get(OptEconomySettingTemplate.CONNECTION_MYSQL_PASSWORD);
         instance.getDebugger().info(String.format(
                 "Open connection in %s", this.getClass().getName()
@@ -72,7 +72,7 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
     }
 
     public String tableName() {
-        return (String) instance.getSettingConfiguration().get(
+        return instance.getSettingConfiguration().get(
                 OptEconomySettingTemplate.CONNECTION_TABLES_OPTECONOMY);
     }
 }

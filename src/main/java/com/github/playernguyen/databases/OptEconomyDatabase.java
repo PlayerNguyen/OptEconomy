@@ -1,99 +1,88 @@
 package com.github.playernguyen.databases;
 
-import com.github.playernguyen.databases.tables.OptEconomyDatabaseTable;
+import com.github.playernguyen.OptEconomy;
 import com.github.playernguyen.establishs.OptEconomySQLEstablish;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-/**
- * The represent class for the database
- */
-public abstract class OptEconomyDatabase {
-    private final OptEconomySQLEstablish establish;
-    //    private OptEconomyDatabaseTableUser userTable;
-    private final Set<OptEconomyDatabaseTable<?>> tableSet = new TreeSet<>();
+public interface OptEconomyDatabase {
 
-    public OptEconomyDatabase(OptEconomySQLEstablish establish)
-            throws SQLException {
-        // Load the variables
-        this.establish = establish;
+    /**
+     * In database, these are many tables. Which table have a unique name to search.
+     * The database set uses to store it as a data structure.
+     *
+     * @return the set which store all database tables inside.
+     */
+    Set<OptEconomyTable<?>> getTableSet();
+
+    /**
+     * Add new table into the table set.
+     *
+     * @param table the table element.
+     */
+    default void addTable(OptEconomyTable<?> table) {
+        this.getTableSet().add(table);
     }
 
     /**
-     * The establish of database
+     * Get the table in the set.
      *
-     * @return the establish of database
+     * @param name the table name
+     * @return the table in set as {@link OptEconomyTable} object.
      */
-    public OptEconomySQLEstablish getEstablish() {
-        return establish;
+    default OptEconomyTable<?> getTable(String name) {
+        return this.getTableSet().stream().filter(e -> e.getName().equalsIgnoreCase(name))
+                .findAny().orElse(null);
     }
 
     /**
-     * Prepare the statement to call query
+     * Check whether the table exist in set
      *
-     * @param prepareString the query to prepare
-     * @param objects       the object list
-     * @return the class which returned
-     * @throws SQLException whether cannot prepare the statement
+     * @param name the table name
+     * @return whether the table is exist or not.
      */
-    public PreparedStatement prepare(String prepareString, Object... objects) throws SQLException {
-        Connection connection = establish.openConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(prepareString);
-        for (int i = 0; i < objects.length; i++) {
-            preparedStatement.setObject(i + 1, objects[i]);
+    default boolean hasTable(String name) {
+        return this.getTable(name) != null;
+    }
+
+    /**
+     * The establish class which provide the establishment to SQL connection
+     *
+     * @return the establish class
+     */
+    OptEconomySQLEstablish getEstablish();
+
+    /**
+     * Get plugin instance
+     *
+     * @return the plugin instance
+     */
+    OptEconomy getPlugin();
+
+    /**
+     * Open the connection and prepare for the data
+     *
+     * @param query the query connection to provide
+     * @param args  the argument list to provide
+     * @return the prepared statement
+     * @throws SQLException whether cannot use SQL.
+     */
+    default PreparedStatement ready(String query, List<Object> args) throws SQLException {
+        Connection connection = this.getEstablish().openConnection();
+        this.getPlugin().getDebugger().info("Generate query " + query);
+        PreparedStatement statement = connection.prepareStatement(query);
+        if (args != null) {
+            // Iterate the list to append data
+            int i = 0;
+            for (Object object : args) {
+                statement.setObject(++i, object);
+            }
         }
-        return preparedStatement;
+        return statement;
     }
 
-    /**
-     * Executing the statement query
-     *
-     * @param string  the query to execute
-     * @param objects the objects will be replaced by the object
-     * @return the boolean statement of execute
-     * @throws SQLException unless the SQL work.
-     * @see PreparedStatement#execute()
-     */
-    public boolean execute(String string, Object... objects) throws SQLException {
-        PreparedStatement prepare = this.prepare(string, objects);
-        return prepare.execute();
-    }
-
-    /**
-     * Executing the ResultSet query
-     *
-     * @param string  the query to execute
-     * @param objects the objects will be replaced by objeects
-     * @return the {@link ResultSet} will be returned
-     * @throws SQLException unless the SQL work
-     */
-    public ResultSet executeQuery(String string, Object... objects) throws SQLException {
-        PreparedStatement prepare = this.prepare(string, objects);
-        return prepare.executeQuery();
-    }
-
-    /**
-     * Executing the updater query.
-     *
-     * @param string  the query
-     * @param objects the objects to be replace
-     * @return the rows affected
-     */
-    public int executeUpdate(String string, Object... objects) throws SQLException {
-        PreparedStatement preparedStatement = this.prepare(string, objects);
-        return preparedStatement.executeUpdate();
-    }
-
-    /**
-     * The table set which contain many table.
-     *
-     * @return the table set object
-     */
-    public Set<OptEconomyDatabaseTable<?>> getTableSet() {
-        return tableSet;
-    }
 }

@@ -3,8 +3,7 @@ package com.github.playernguyen;
 import com.github.playernguyen.apis.OptEconomyAPIManager;
 import com.github.playernguyen.apis.OptEconomyPluginPlaceholderAPI;
 import com.github.playernguyen.databases.OptEconomyDatabase;
-import com.github.playernguyen.databases.OptEconomyDatabaseMySQL;
-import com.github.playernguyen.databases.OptEconomyDatabaseSQLite;
+import com.github.playernguyen.databases.mysql.OptEconomyDatabaseMySQL;
 import com.github.playernguyen.debuggers.OptEconomyDebugger;
 import com.github.playernguyen.establishs.OptEconomySQLEstablish;
 import com.github.playernguyen.establishs.OptEconomySQLEstablishMySQL;
@@ -185,13 +184,15 @@ public final class OptEconomy extends JavaPlugin {
         } else {
             switch (storageType) {
                 case SQLITE: {
-                    this.database = new OptEconomyDatabaseSQLite(this, this.getEstablish());
-                    break;
+                    throw new NullPointerException();
+//                    this.database = new OptEconomyDatabaseSQLite(this, this.getEstablish());
+//                    break;
                 }
                 case MYSQL: {
-                    this.database = new OptEconomyDatabaseMySQL(this, this.getEstablish());
+                    this.database = new OptEconomyDatabaseMySQL(this, this.establish);
                     break;
                 }
+                default: throw new UnsupportedOperationException("Invalid database construction <?>");
             }
         }
     }
