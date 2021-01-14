@@ -33,7 +33,7 @@ public class OptEconomyLocalizeConfiguration extends OptEconomyConfiguration<Opt
     }
 
     /**
-     * Get the raw localize
+     * Get the raw localize (without translate color)
      *
      * @param key the key of localize value
      * @return the raw value without translate the color
@@ -48,7 +48,7 @@ public class OptEconomyLocalizeConfiguration extends OptEconomyConfiguration<Opt
      * @param key the key of localize value
      * @return the colorful localize with translate color to get
      */
-    public OptEconomyString colour(OptEconomyLocalizeTemplate key) {
+    public OptEconomyString color(OptEconomyLocalizeTemplate key) {
         return new OptEconomyString(
                 instance,
                 ChatColor.translateAlternateColorCodes(OptEconomyConstants.COLOUR_CHAR,
@@ -62,7 +62,7 @@ public class OptEconomyLocalizeConfiguration extends OptEconomyConfiguration<Opt
      * @param key the key of localize value
      * @return the colorful localize with prefix
      */
-    public OptEconomyString prefixedColour(OptEconomyLocalizeTemplate key) {
+    public OptEconomyString prefixedColor(OptEconomyLocalizeTemplate key) {
         return new OptEconomyString(
                 instance,
                 ChatColor.translateAlternateColorCodes(OptEconomyConstants.COLOUR_CHAR,

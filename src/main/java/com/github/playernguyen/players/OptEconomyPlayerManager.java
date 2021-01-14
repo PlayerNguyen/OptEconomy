@@ -23,33 +23,43 @@ public class OptEconomyPlayerManager extends OptEconomyManagerList<OptEconomyPla
     }
 
     /**
-     * Get the player from manager list
+     * Get the player from manager list. Whether not found that player, create that player with balance value at init level.
      *
      * @param uuid the uuid of player
      * @return the player will be returned
-     * @throws SQLException throw whether cannot get new exception
+     * @throws SQLException throw whether cannot connect or execute queries
+     * @see com.github.playernguyen.players.storages.OptEconomyPlayerStorageManager#get(UUID)
      */
     public OptEconomyPlayer get(UUID uuid) throws SQLException {
         // Find it in collection
         OptEconomyPlayer player = this.collection().stream().filter(element -> element.getUniqueId().equals(uuid))
                 .findAny().orElse(null);
-        // Add new storage
-        //  And then check is out of date
-        //  If out of date, update player
-        //  Or else return the player
+        // Describe method:
+        //  Add new storage and then check whether is out of date
+        //      If out of date, update player
+        //      Else return the player
         if (player == null) {
-            this.collection().add(instance.getPlayerStorageManager().getNotNull(uuid));
+            player = instance.getPlayerStorageManager().getNotNull(uuid);
+            this.collection().add(player);
         } else {
             if ((System.currentTimeMillis() - player.getLastUpdated()) >
-                    (long) instance
-                            .getSettingConfiguration().get(OptEconomySettingTemplate.CACHE_STORAGE_DURATION
-                            )) {
+                    Long.parseLong(instance.getSettingConfiguration().get(OptEconomySettingTemplate.CACHE_STORAGE_DURATION))) {
                 this.updatePlayer(uuid);
             }
         }
         // Collection debugger
         instance.getDebugger().iterateOut(this.collection());
         return player;
+    }
+
+    /**
+     * Get the player from manager list only.
+     *
+     * @param uuid
+     * @return
+     */
+    public OptEconomyPlayer getInCollection(UUID uuid) {
+        return this.collection().stream().filter(element -> element.getUniqueId().equals(uuid)).findAny().orElse(null);
     }
 
     /**

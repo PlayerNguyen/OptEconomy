@@ -1,22 +1,23 @@
 package com.github.playernguyen.databases;
 
-import com.github.playernguyen.databases.tables.OptEconomyDatabaseTableUser;
+import com.github.playernguyen.databases.tables.OptEconomyDatabaseTable;
 import com.github.playernguyen.establishs.OptEconomySQLEstablish;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.*;
 
 /**
  * The represent class for the database
  */
-public abstract class OptEconomyDatabases {
-
+public abstract class OptEconomyDatabase {
     private final OptEconomySQLEstablish establish;
-    private OptEconomyDatabaseTableUser userTable;
+    //    private OptEconomyDatabaseTableUser userTable;
+    private final Set<OptEconomyDatabaseTable<?>> tableSet = new TreeSet<>();
 
-    public OptEconomyDatabases(OptEconomySQLEstablish establish)
+    public OptEconomyDatabase(OptEconomySQLEstablish establish)
             throws SQLException {
         // Load the variables
         this.establish = establish;
@@ -76,29 +77,23 @@ public abstract class OptEconomyDatabases {
     }
 
     /**
-     * The user table of the database
-     * @return user table of the database
-     */
-    public OptEconomyDatabaseTableUser getUserTable() {
-        return userTable;
-    }
-
-    /**
-     * Set the table user after initiate
-     * @param userTable the table user which will be set
-     */
-    public void setUserTable(OptEconomyDatabaseTableUser userTable) {
-        this.userTable = userTable;
-    }
-
-    /**
-     * Executing the updater query
-     * @param string the query
+     * Executing the updater query.
+     *
+     * @param string  the query
      * @param objects the objects to be replace
      * @return the rows affected
      */
     public int executeUpdate(String string, Object... objects) throws SQLException {
         PreparedStatement preparedStatement = this.prepare(string, objects);
         return preparedStatement.executeUpdate();
+    }
+
+    /**
+     * The table set which contain many table.
+     *
+     * @return the table set object
+     */
+    public Set<OptEconomyDatabaseTable<?>> getTableSet() {
+        return tableSet;
     }
 }

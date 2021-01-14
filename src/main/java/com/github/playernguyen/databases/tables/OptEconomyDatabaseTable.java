@@ -1,41 +1,84 @@
 package com.github.playernguyen.databases.tables;
 
-import com.github.playernguyen.databases.OptEconomyDatabases;
+import com.github.playernguyen.databases.OptEconomyDatabase;
+import com.github.playernguyen.databases.OptEconomyDatabaseObject;
 import com.github.playernguyen.objects.OptEconomyPair;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The table of database class represent
+ * The table of database class represent.
+ * @param <
  */
-public abstract class OptEconomyDatabaseTable {
-
+public abstract class OptEconomyDatabaseTable<T extends OptEconomyDatabaseObject> implements Comparable<OptEconomyDatabaseTable> {
     private final String name;
-    private final OptEconomyDatabases databases;
+    private final OptEconomyDatabase database;
+    private final List<OptEconomyDatabaseTableField<?>> fieldList;
 
-    public OptEconomyDatabaseTable(String name, OptEconomyDatabases databases) throws SQLException {
+    public OptEconomyDatabaseTable(String name, OptEconomyDatabase databases) throws SQLException {
         this.name = name;
-        this.databases = databases;
-        // Create
+        this.database = databases;
+        this.fieldList = new ArrayList<>();
+        // Call set up function;
+        this.setup();
+        // Call create function;
         this.onCreate();
+    }
+
+    /**
+     * Set up the table in database.
+     *
+     * @throws SQLException whether cause SQL issues.
+     */
+    private void setup() throws SQLException {
+        StringBuilder dataSet = new StringBuilder();
+
+        Iterator<OptEconomyDatabaseTableField<?>> iterator = fieldList.iterator();
+        while (iterator.hasNext()) {
+            OptEconomyDatabaseTableField<?> next = iterator.next();
+            dataSet.append(next.toDeclaredString());
+            if (iterator.hasNext()) {
+                dataSet.append(", ");
+            }
+        }
+
+        this.database.executeUpdate(String.format("CREATE TABLE IF NOT EXISTS %s (%s)",
+                this.getName(),
+                dataSet.toString())
+        );
+    }
+
+    /**
+     * Add new field into the field list.
+     *
+     * @param field the field want to add to field list
+     * @return whether field was added.
+     */
+    public boolean addField(OptEconomyDatabaseTableField<?> field) {
+        return this.fieldList.add(field);
     }
 
     /**
      * The abstract class call when the constructor was created
      */
-    protected abstract void onCreate() throws SQLException;
+    protected void onCreate() throws SQLException {
+    }
 
     /**
      * Get the current database class
      *
      * @return the current database class
      */
-    public OptEconomyDatabases getDatabases() {
-        return databases;
+    public OptEconomyDatabase getDatabase() {
+        return database;
     }
 
     /**
@@ -56,7 +99,7 @@ public abstract class OptEconomyDatabaseTable {
      * @throws SQLException whether the SQL is not working
      */
     public ResultSet selectAll(String args, Object... objects) throws SQLException {
-        PreparedStatement preparedStatement = this.getDatabases().prepare(
+        PreparedStatement preparedStatement = this.getDatabase().prepare(
                 String.format("SELECT * FROM %s " + args, this.getName()),
                 objects);
         return preparedStatement.executeQuery();
@@ -96,11 +139,12 @@ public abstract class OptEconomyDatabaseTable {
                 queryBuilder.append(");");
             }
         }
+
         // Prepare and execute
-        PreparedStatement preparedStatement = this.getDatabases().prepare(queryBuilder.toString(),
+        PreparedStatement preparedStatement = this.getDatabase().prepare(queryBuilder.toString(),
                 Arrays.stream(pairs).map(OptEconomyPair::getSecond).toArray()
         );
-        // Execute and return rows affect. Whether 1 is true, 0 is false
+        // Execute and return rows affect. Whether 1 is true, 0 is false.
         return (preparedStatement.executeUpdate() == 1);
     }
 
@@ -115,7 +159,7 @@ public abstract class OptEconomyDatabaseTable {
             }
         }
         builder.append(" WHERE ").append(where.getFirst()).append("=").append("?");
-        PreparedStatement statement = this.getDatabases().prepare(
+        PreparedStatement statement = this.getDatabase().prepare(
                 builder.toString(),
                 Arrays.stream(pairs).map(OptEconomyPair::getSecond).collect(Collectors.toList()).add(where.getSecond())
         );
@@ -123,4 +167,24 @@ public abstract class OptEconomyDatabaseTable {
         return (statement.executeUpdate() == 1);
     }
 
+    /**
+     * The field list
+     *
+     * @return the result of that list
+     */
+    public List<OptEconomyDatabaseTableField<?>> getFieldList() {
+        return fieldList;
+    }
+
+    /**
+     * Inheriting from {@link Comparable}
+     */
+    @Override
+    public int compareTo(@NotNull OptEconomyDatabaseTable o) {
+        return this.name.compareTo(o.name);
+    }
+
+    public List<T> select() {
+
+    }
 }

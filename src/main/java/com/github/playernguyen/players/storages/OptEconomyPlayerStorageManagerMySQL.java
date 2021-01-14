@@ -1,7 +1,7 @@
 package com.github.playernguyen.players.storages;
 
 import com.github.playernguyen.OptEconomy;
-import com.github.playernguyen.databases.OptEconomyDatabases;
+import com.github.playernguyen.databases.OptEconomyDatabase;
 
 /**
  * Inheritance from {@link OptEconomyPlayerStorageManager}.
@@ -9,7 +9,7 @@ import com.github.playernguyen.databases.OptEconomyDatabases;
 public class OptEconomyPlayerStorageManagerMySQL extends OptEconomyPlayerStorageManager {
 
     public OptEconomyPlayerStorageManagerMySQL(OptEconomy ins,
-                                               OptEconomyDatabases databases) {
+                                               OptEconomyDatabase databases) {
         super(ins, databases);
     }
 

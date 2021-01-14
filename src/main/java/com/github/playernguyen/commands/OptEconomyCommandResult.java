@@ -5,6 +5,6 @@ package com.github.playernguyen.commands;
  */
 public enum OptEconomyCommandResult {
 
-    NOTHING, NULL
+    NO_PERMISSION, NOTHING, NULL
 
 }

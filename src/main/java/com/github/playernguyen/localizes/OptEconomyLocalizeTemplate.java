@@ -6,7 +6,13 @@ public enum  OptEconomyLocalizeTemplate implements OptEconomyTemplate {
 
     PREFIX("Prefix", "&7[&cOptEconomy&7] "),
 
-    COMMAND_NO_PERMISSION("Command.NoPermission", "&cYou are not having the permission to do this command")
+    COMMAND_NO_PERMISSION("Command.NoPermission", "&cYou are not having the permission to do this command"),
+
+    COMMAND_MAIN_COMMAND_DESCRIPTION("Command.OptEconomy.MainDescription", "The command of OptEconomy"),
+    COMMAND_PARAMETER_COMMAND("Command.Parameter.Command", "command"),
+
+    COMMAND_PARAM_REQUIRED("Command.Param.Required", "Required"),
+    COMMAND_PARAM_NON_REQUIRED("Command.Param.Non-Required", "Non-Required"),
 
     ;
 

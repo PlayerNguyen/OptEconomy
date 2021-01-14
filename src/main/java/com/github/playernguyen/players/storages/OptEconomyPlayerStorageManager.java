@@ -1,7 +1,7 @@
 package com.github.playernguyen.players.storages;
 
 import com.github.playernguyen.OptEconomy;
-import com.github.playernguyen.databases.OptEconomyDatabases;
+import com.github.playernguyen.databases.OptEconomyDatabase;
 import com.github.playernguyen.objects.OptEconomyDouble;
 import com.github.playernguyen.objects.OptEconomyPair;
 import com.github.playernguyen.players.OptEconomyPlayer;
@@ -21,14 +21,14 @@ import java.util.UUID;
 public abstract class OptEconomyPlayerStorageManager {
 
     private final OptEconomy instance;
-    private final OptEconomyDatabases databases;
+    private final OptEconomyDatabase databases;
 
-    public OptEconomyPlayerStorageManager(OptEconomy instance, OptEconomyDatabases databases) {
+    public OptEconomyPlayerStorageManager(OptEconomy instance, OptEconomyDatabase databases) {
         this.instance = instance;
         this.databases = databases;
     }
 
-    public OptEconomyDatabases getDatabases() {
+    public OptEconomyDatabase getDatabases() {
         return databases;
     }
 
@@ -76,14 +76,15 @@ public abstract class OptEconomyPlayerStorageManager {
      * @throws SQLException unless connected to the SQL Server or trouble
      */
     public List<OptEconomyPlayer> find(UUID from) throws SQLException {
-        ResultSet resultSet = this.getDatabases().getUserTable().selectAll("WHERE uuid=?", from);
-        List<OptEconomyPlayer> temp = new ArrayList<>();
-        while (resultSet.next()) {
-            UUID uuid = UUID.fromString(resultSet.getString("uuid"));
-            double balance = resultSet.getDouble("balance");
-            temp.add(new OptEconomyPlayer(uuid, new OptEconomyDouble(balance), System.currentTimeMillis()));
-        }
-        return temp;
+//        ResultSet resultSet = this.getDatabases().getUserTable().selectAll("WHERE uuid=?", from);
+//        List<OptEconomyPlayer> temp = new ArrayList<>();
+//        while (resultSet.next()) {
+//            UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+//            double balance = resultSet.getDouble("balance");
+//            temp.add(new OptEconomyPlayer(uuid, new OptEconomyDouble(balance), System.currentTimeMillis()));
+//        }
+//        return temp;
+        return null;
     }
 
     /**
@@ -111,22 +112,22 @@ public abstract class OptEconomyPlayerStorageManager {
         if (!has(uniqueId)) {
             // Inserting new one
             instance.getDebugger().info("Inserting new account data (" + player.toString() + ")...");
-            this.getDatabases().getUserTable().insert(
-                    OptEconomyPair.of("uuid", uniqueId.toString()),
-                    OptEconomyPair.of("balance", player.getBalance().toDouble()),
-                    OptEconomyPair.of("username", OptEconomyPlayerAdapter.getUsernameFromUUID(uniqueId))
-            );
+//            this.getDatabases().getUserTable().insert(
+//                    OptEconomyPair.of("uuid", uniqueId.toString()),
+//                    OptEconomyPair.of("balance", player.getBalance().toDouble()),
+//                    OptEconomyPair.of("username", OptEconomyPlayerAdapter.getUsernameFromUUID(uniqueId))
+//            );
         } else {
             // Updating the value
             instance.getDebugger().info(String.format("Updating the account (%s = %s)",
                     player, player.getBalance().toDouble())
             );
-            this.getDatabases().getUserTable().update(
-                    // Where
-                    OptEconomyPair.of("uuid", uniqueId),
-                    // Update values
-                    OptEconomyPair.of("balance", player.getBalance().toDouble())
-            );
+//            this.getDatabases().getUserTable().update(
+//                    // Where
+//                    OptEconomyPair.of("uuid", uniqueId),
+//                    // Update values
+//                    OptEconomyPair.of("balance", player.getBalance().toDouble())
+//            );
         }
     }
 }

@@ -38,7 +38,6 @@ public class OptEconomySQLEstablishSQLite implements OptEconomySQLEstablish {
         return DriverManager.getConnection(this.url);
     }
 
-    @Override
     public List<String> tableList() throws SQLException {
         Connection connection = this.openConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(
@@ -52,7 +51,6 @@ public class OptEconomySQLEstablishSQLite implements OptEconomySQLEstablish {
         return tableList;
     }
 
-    @Override
     public String tableName() {
         return (String) instance.getSettingConfiguration().get(
                 OptEconomySettingTemplate.CONNECTION_TABLES_OPTECONOMY);

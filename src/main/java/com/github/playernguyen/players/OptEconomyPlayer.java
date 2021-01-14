@@ -14,7 +14,13 @@ public class OptEconomyPlayer implements Comparable<OptEconomyPlayer> {
      * The immutable identify for object
      */
     private final UUID uniqueId;
+    /**
+     * A balance of player aka. point
+     */
     private OptEconomyDouble balance;
+    /**
+     * The last update data of player of the cache
+     */
     private long lastUpdated;
 
     /**

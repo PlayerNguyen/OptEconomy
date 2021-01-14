@@ -1,6 +1,8 @@
 package com.github.playernguyen.commands;
 
 import com.github.playernguyen.OptEconomy;
+import com.github.playernguyen.localizes.OptEconomyLocalizeTemplate;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +67,8 @@ public interface OptEconomyCommand extends Comparable<OptEconomyCommand> {
      * @return a permission node (as {@link String}) of this command
      */
     default String getPermission() {
-        return this.getInstance().getDescription().getName().concat(".command.").concat(this.getName());
+        return this.getInstance().getDescription().getName().toLowerCase().concat(".command.").concat(this.getName())
+                .trim();
     }
 
     /**
@@ -79,5 +82,45 @@ public interface OptEconomyCommand extends Comparable<OptEconomyCommand> {
     @Override
     default int compareTo(@NotNull OptEconomyCommand o) {
         return this.getName().compareToIgnoreCase(o.getName());
+    }
+
+    /**
+     * Build a parameter as string query
+     *
+     * @return the query of parameter
+     */
+    default String buildParameter() {
+        // Creating new builder
+        StringBuilder builder = new StringBuilder();
+        // Putting bricks on it
+        for (OptEconomyCommandParameter parameter : getParameters()) {
+            if (parameter.isRequired()) {
+                builder.append("<").append(parameter.getName()).append(">");
+            } else {
+                builder.append("[").append(parameter.getName()).append("]");
+            }
+            builder.append(" ");
+        }
+        // Painting and completing it
+        return builder.toString();
+    }
+
+    /**
+     * Send a help form to sender
+     *
+     * @param sender   the sender to send
+     * @param commands a list of command
+     */
+    default void sendHelpForm(CommandSender sender, List<OptEconomyCommand> commands) {
+        sender.sendMessage(ChatColor.GRAY + "========================");
+        sender.sendMessage(String.format("\t<~> %s - [~] %s",
+                this.getInstance().getLocalizeConfiguration().raw(OptEconomyLocalizeTemplate.COMMAND_PARAM_REQUIRED),
+                this.getInstance().getLocalizeConfiguration().raw(OptEconomyLocalizeTemplate.COMMAND_PARAM_NON_REQUIRED)
+        ));
+        for (OptEconomyCommand command : commands) {
+            sender.sendMessage(
+                    command.getName()
+            );
+        }
     }
 }

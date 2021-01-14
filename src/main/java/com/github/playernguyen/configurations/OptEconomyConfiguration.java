@@ -87,12 +87,13 @@ public abstract class OptEconomyConfiguration<T extends OptEconomyTemplate> {
      * @param key the key in template
      * @return the Object class of {@link T#path()}
      */
-    public Object get(@NotNull T key) {
+    @SuppressWarnings(value = "unchecked")
+    public <TType> TType get(@NotNull T key) {
         Preconditions.checkNotNull(key);
         instance.getDebugger().info(String.format(
                 "Getting %s <%s>", key.path(), this.getClass().getSimpleName()
         ));
-        return Objects.requireNonNull(this.fileConfiguration.get(key.path()));
+        return (TType) Objects.requireNonNull(this.fileConfiguration.get(key.path()));
     }
 
     /**

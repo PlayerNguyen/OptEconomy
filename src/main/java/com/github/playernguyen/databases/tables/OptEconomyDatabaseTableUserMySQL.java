@@ -1,6 +1,6 @@
 package com.github.playernguyen.databases.tables;
 
-import com.github.playernguyen.databases.OptEconomyDatabases;
+import com.github.playernguyen.databases.OptEconomyDatabase;
 
 import java.sql.SQLException;
 
@@ -10,7 +10,7 @@ import java.sql.SQLException;
  */
 public class OptEconomyDatabaseTableUserMySQL extends OptEconomyDatabaseTableUser {
 
-    public OptEconomyDatabaseTableUserMySQL(String name, OptEconomyDatabases databases)
+    public OptEconomyDatabaseTableUserMySQL(String name, OptEconomyDatabase databases)
             throws SQLException {
         super(name, databases);
     }

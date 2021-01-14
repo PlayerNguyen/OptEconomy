@@ -31,7 +31,9 @@ public class OptEconomyPluginPlaceholderAPI extends OptEconomyPluginProvider {
     private void register(OptEconomy instance) {
         // Register expansion
         instance.getDebugger().info("Registering an expansion of PlaceholderAPI");
-        this.getExpansion(instance).register();
+        if (this.isEnabled()) {
+            this.getExpansion(instance).register();
+        }
     }
 
     public PlaceholderExpansion getExpansion(OptEconomy instance) {

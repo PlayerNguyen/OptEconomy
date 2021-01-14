@@ -2,9 +2,9 @@ package com.github.playernguyen;
 
 import com.github.playernguyen.apis.OptEconomyAPIManager;
 import com.github.playernguyen.apis.OptEconomyPluginPlaceholderAPI;
+import com.github.playernguyen.databases.OptEconomyDatabase;
+import com.github.playernguyen.databases.OptEconomyDatabaseMySQL;
 import com.github.playernguyen.databases.OptEconomyDatabaseSQLite;
-import com.github.playernguyen.databases.OptEconomyDatabases;
-import com.github.playernguyen.databases.OptEconomyDatabasesMySQL;
 import com.github.playernguyen.debuggers.OptEconomyDebugger;
 import com.github.playernguyen.establishs.OptEconomySQLEstablish;
 import com.github.playernguyen.establishs.OptEconomySQLEstablishMySQL;
@@ -38,7 +38,6 @@ import java.sql.SQLException;
  * The main class for OptEconomy
  */
 public final class OptEconomy extends JavaPlugin {
-
     // Global fields
     private static OptEconomy instance;
 
@@ -48,7 +47,7 @@ public final class OptEconomy extends JavaPlugin {
     private OptEconomyDebugger debugger;
     private OptEconomySQLEstablish establish;
     private OptEconomyLocalizeConfiguration localizeConfiguration;
-    private OptEconomyDatabases databases;
+    private OptEconomyDatabase database;
     private OptEconomyPlayerStorageManager playerStorageManager;
     private OptEconomyPlayerManager playerManager;
     private OptEconomyListenerManager listenerManager;
@@ -145,11 +144,11 @@ public final class OptEconomy extends JavaPlugin {
         if (playerStorageManager == null) {
             switch (getStorageType()) {
                 case MYSQL: {
-                    this.playerStorageManager = new OptEconomyPlayerStorageManagerMySQL(this, this.getDatabases());
+                    this.playerStorageManager = new OptEconomyPlayerStorageManagerMySQL(this, this.getDatabase());
                     break;
                 }
                 case SQLITE: {
-                    this.playerStorageManager = new OptEconomyPlayerStorageManagerSQLite(this, this.getDatabases());
+                    this.playerStorageManager = new OptEconomyPlayerStorageManagerSQLite(this, this.getDatabase());
                     break;
                 }
             }
@@ -186,11 +185,11 @@ public final class OptEconomy extends JavaPlugin {
         } else {
             switch (storageType) {
                 case SQLITE: {
-                    this.databases = new OptEconomyDatabaseSQLite(this, this.getEstablish());
+                    this.database = new OptEconomyDatabaseSQLite(this, this.getEstablish());
                     break;
                 }
                 case MYSQL: {
-                    this.databases = new OptEconomyDatabasesMySQL(this, this.getEstablish());
+                    this.database = new OptEconomyDatabaseMySQL(this, this.getEstablish());
                     break;
                 }
             }
@@ -312,10 +311,10 @@ public final class OptEconomy extends JavaPlugin {
     /**
      * The databases of player to get and interact with database server
      *
-     * @return the {@link OptEconomyDatabases} class
+     * @return the {@link OptEconomyDatabase} class
      */
-    public OptEconomyDatabases getDatabases() {
-        return databases;
+    public OptEconomyDatabase getDatabase() {
+        return database;
     }
 
     /**
@@ -354,6 +353,7 @@ public final class OptEconomy extends JavaPlugin {
 
     /**
      * API Manager
+     *
      * @return the API Manager class
      */
     public OptEconomyAPIManager getAPIManager() {

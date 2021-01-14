@@ -57,7 +57,6 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
         return DriverManager.getConnection(url.toString(), username, password);
     }
 
-    @Override
     public List<String> tableList() throws SQLException {
         try (Connection connection = this.openConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("SHOW TABLES;");
@@ -72,7 +71,6 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
         }
     }
 
-    @Override
     public String tableName() {
         return (String) instance.getSettingConfiguration().get(
                 OptEconomySettingTemplate.CONNECTION_TABLES_OPTECONOMY);
