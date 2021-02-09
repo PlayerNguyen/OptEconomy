@@ -40,4 +40,5 @@ public abstract class OptEconomyManagerList<T> implements OptEconomyManager<T> {
     public Collection<T> collection() {
         return this.collection;
     }
+
 }

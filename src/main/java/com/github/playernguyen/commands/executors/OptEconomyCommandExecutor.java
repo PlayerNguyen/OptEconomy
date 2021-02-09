@@ -20,7 +20,6 @@ import java.util.*;
  * An abstract class command executor
  */
 public abstract class OptEconomyCommandExecutor implements OptEconomyCommand, TabExecutor {
-
     private final OptEconomy instance;
     private final String name;
     private final String description;
@@ -110,6 +109,10 @@ public abstract class OptEconomyCommandExecutor implements OptEconomyCommand, Ta
         }
         // Otherwise, using tab to complete
         return this.tab(sender, Arrays.asList(args));
+    }
+
+    public void registerSubCommand(OptEconomyCommandSub sub) {
+        this.subCommandList.add(sub);
     }
 
 }

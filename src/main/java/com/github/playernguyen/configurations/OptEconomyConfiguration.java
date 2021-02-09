@@ -111,7 +111,7 @@ public abstract class OptEconomyConfiguration<T extends OptEconomyTemplate> {
      * @return the String object which was configured
      */
     public String getString(@NotNull T key) {
-        return (String) get(key);
+        return get(key);
     }
 
 }

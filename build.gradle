@@ -34,7 +34,7 @@ dependencies {
     // PaperMc
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.32.3.2'
+    compileOnly group: 'org.xerial', name: 'sqlite-jdbc', version: '3.32.3.2'
     // PlaceholderAPI
     compileOnly 'me.clip:placeholderapi:2.10.9'
 }

@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,7 +14,6 @@ import java.util.List;
  * This class will include the permission and the instance of OptEconomy.
  */
 public interface OptEconomyCommand extends Comparable<OptEconomyCommand> {
-
     /**
      * The name of command or even sub-command
      *
@@ -111,16 +111,30 @@ public interface OptEconomyCommand extends Comparable<OptEconomyCommand> {
      * @param sender   the sender to send
      * @param commands a list of command
      */
-    default void sendHelpForm(CommandSender sender, List<OptEconomyCommand> commands) {
-        sender.sendMessage(ChatColor.GRAY + "========================");
-        sender.sendMessage(String.format("\t<~> %s - [~] %s",
+    default void sendHelpForm(CommandSender sender, Collection<OptEconomyCommand> commands) {
+        sender.sendMessage(ChatColor.GRAY + "-------------------------------");
+        sender.sendMessage(ChatColor.BOLD + ""
+                + ChatColor.GRAY + "*  " + "" + ChatColor.GOLD + "OptEconomy by " + ChatColor.AQUA
+                + "Player_Nguyen ");
+        sender.sendMessage(ChatColor.GRAY + "* ");
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', String.format(
+                "&7* &c<~> %s - &b[~] %s",
                 this.getInstance().getLocalizeConfiguration().raw(OptEconomyLocalizeTemplate.COMMAND_PARAM_REQUIRED),
                 this.getInstance().getLocalizeConfiguration().raw(OptEconomyLocalizeTemplate.COMMAND_PARAM_NON_REQUIRED)
-        ));
+        )));
+        sender.sendMessage(ChatColor.GRAY + "-------------------------------");
+
+        // Iterate the command list and send guide
         for (OptEconomyCommand command : commands) {
-            sender.sendMessage(
-                    command.getName()
-            );
+            sender.sendMessage(String.format(
+                    ChatColor.translateAlternateColorCodes(
+                            '&',
+                            "&6/p &3%s &7%s: &7%s"
+                    ),
+                    command.getName().trim(),
+                    command.buildParameter().trim(),
+                    command.getDescription().trim()
+            ));
         }
     }
 }

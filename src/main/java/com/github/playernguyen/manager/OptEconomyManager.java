@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Predicate;
@@ -12,6 +11,7 @@ import java.util.stream.Stream;
 
 /**
  * Manager is a collection class to contain data with specify type in them
+ *
  * @param <T>
  */
 public interface OptEconomyManager<T> extends Iterable<T> {
@@ -26,6 +26,7 @@ public interface OptEconomyManager<T> extends Iterable<T> {
 
     /**
      * The {@link Stream} using collection class
+     *
      * @return The Stream API by using Collection#stream function
      */
     default Stream<T> stream() {
@@ -46,11 +47,19 @@ public interface OptEconomyManager<T> extends Iterable<T> {
 
     /**
      * Inherit method from the {@link Iterator}
+     *
      * @return the iterator function from collection
      */
     @NotNull
     @Override
     default Iterator<T> iterator() {
         return this.collection().iterator();
+    }
+
+    /**
+     * Clear the collection
+     */
+    default void clear() {
+        this.collection().clear();
     }
 }

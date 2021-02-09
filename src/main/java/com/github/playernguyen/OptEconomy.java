@@ -2,8 +2,11 @@ package com.github.playernguyen;
 
 import com.github.playernguyen.apis.OptEconomyAPIManager;
 import com.github.playernguyen.apis.OptEconomyPluginPlaceholderAPI;
+import com.github.playernguyen.commands.OptEconomyCommandExecutorManager;
+import com.github.playernguyen.commands.executors.OptEconomyCommandOptEconomy;
 import com.github.playernguyen.databases.OptEconomyDatabase;
 import com.github.playernguyen.databases.mysql.OptEconomyDatabaseMySQL;
+import com.github.playernguyen.databases.sqlite.OptEconomyDatabaseSQLite;
 import com.github.playernguyen.debuggers.OptEconomyDebugger;
 import com.github.playernguyen.establishs.OptEconomySQLEstablish;
 import com.github.playernguyen.establishs.OptEconomySQLEstablishMySQL;
@@ -16,7 +19,7 @@ import com.github.playernguyen.listeners.OptEconomyPlayerListener;
 import com.github.playernguyen.localizes.OptEconomyLocalizeConfiguration;
 import com.github.playernguyen.loggers.OptEconomyExceptionCatcher;
 import com.github.playernguyen.loggers.OptEconomyLogger;
-import com.github.playernguyen.players.OptEconomyPlayerManager;
+import com.github.playernguyen.players.OptEconomyPlayerCacheManager;
 import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManager;
 import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManagerMySQL;
 import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManagerSQLite;
@@ -48,10 +51,11 @@ public final class OptEconomy extends JavaPlugin {
     private OptEconomyLocalizeConfiguration localizeConfiguration;
     private OptEconomyDatabase database;
     private OptEconomyPlayerStorageManager playerStorageManager;
-    private OptEconomyPlayerManager playerManager;
+    private OptEconomyPlayerCacheManager playerManager;
     private OptEconomyListenerManager listenerManager;
     private OptEconomyAPIManager APIManager;
     private OptEconomyRunnableVacuum runnableVacuum;
+    private OptEconomyCommandExecutorManager executorManager;
 
     /**
      * Enable function
@@ -69,7 +73,9 @@ public final class OptEconomy extends JavaPlugin {
             this.setupPlayers();
             this.setupListener();
             this.setupDependencies();
-            this.setupVacuum();
+            // No vacuum
+//            this.setupVacuum();
+            this.setupCommands();
         } catch (Exception e) {
             // Notice the Severe to user interface when catch error
             this.getOptLogger().error("Disable the plugin because of error: ");
@@ -80,15 +86,29 @@ public final class OptEconomy extends JavaPlugin {
         }
     }
 
-    private void setupVacuum() {
-        if (this.runnableVacuum == null) {
-            this.runnableVacuum = new OptEconomyRunnableVacuum(this, new OptEconomyVacuum(this));
+    private void setupCommands() {
+        if (this.executorManager == null) {
+            this.executorManager = new OptEconomyCommandExecutorManager(this);
         } else {
-            this.runnableVacuum.cancel();
+            this.executorManager.clear();
         }
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, this.runnableVacuum, 0, 0);
+        this.executorManager.register(new OptEconomyCommandOptEconomy(this));
     }
 
+//    private void setupVacuum() {
+//        if (this.runnableVacuum == null) {
+//            this.runnableVacuum = new OptEconomyRunnableVacuum(this, new OptEconomyVacuum(this));
+//        } else {
+//            this.runnableVacuum.cancel();
+//        }
+//        // Bukkit.getScheduler().runTaskTimerAsynchronously(this, this.runnableVacuum, 0, 0);
+//        this.runnableVacuum.runTaskTimerAsynchronously(this, 0, 0);
+//    }
+
+    /**
+     * Dependencies set up
+     * @throws PluginNotFoundException whether not found the plugin
+     */
     private void setupDependencies() throws PluginNotFoundException {
         if (this.APIManager == null) {
             this.APIManager = new OptEconomyAPIManager(this);
@@ -96,8 +116,9 @@ public final class OptEconomy extends JavaPlugin {
             this.APIManager.clear();
         }
         // Register item
-        this.APIManager.register(OptEconomyConstants.PLUGIN_NAME_PLACEHOLDER_API, new OptEconomyPluginPlaceholderAPI(
-                this)
+        this.APIManager.register(
+                OptEconomyConstants.PLUGIN_NAME_PLACEHOLDER_API,
+                new OptEconomyPluginPlaceholderAPI(this)
         );
     }
 
@@ -155,7 +176,7 @@ public final class OptEconomy extends JavaPlugin {
 
         // Player manager set up
         if (playerManager == null) {
-            this.playerManager = new OptEconomyPlayerManager(this);
+            this.playerManager = new OptEconomyPlayerCacheManager(this);
         } else {
             playerManager.collection().clear();
         }
@@ -184,9 +205,9 @@ public final class OptEconomy extends JavaPlugin {
         } else {
             switch (storageType) {
                 case SQLITE: {
-                    throw new NullPointerException();
-//                    this.database = new OptEconomyDatabaseSQLite(this, this.getEstablish());
-//                    break;
+//                    throw new NullPointerException();
+                    this.database = new OptEconomyDatabaseSQLite(this, this.getEstablish());
+                    break;
                 }
                 case MYSQL: {
                     this.database = new OptEconomyDatabaseMySQL(this, this.establish);
@@ -204,7 +225,7 @@ public final class OptEconomy extends JavaPlugin {
         this.getOptLogger().normal("Loading language file...");
         if (this.localizeConfiguration == null) {
             this.localizeConfiguration = new OptEconomyLocalizeConfiguration(this,
-                    (String) getSettingConfiguration().get(OptEconomySettingTemplate.GENERAL_LANGUAGE_FILE_NAME)
+                    getSettingConfiguration().get(OptEconomySettingTemplate.GENERAL_LANGUAGE_FILE_NAME)
             );
         } else {
             this.localizeConfiguration.reload();
@@ -341,7 +362,7 @@ public final class OptEconomy extends JavaPlugin {
      *
      * @return the manager class of player
      */
-    public OptEconomyPlayerManager getPlayerManager() {
+    public OptEconomyPlayerCacheManager getPlayerManager() {
         return playerManager;
     }
 

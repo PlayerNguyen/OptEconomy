@@ -2,18 +2,21 @@ package com.github.playernguyen.objects;
 
 import com.github.playernguyen.OptEconomy;
 import com.github.playernguyen.OptEconomyConstants;
+import com.github.playernguyen.players.OptEconomyPlayer;
+import com.github.playernguyen.settings.OptEconomySettingTemplate;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The Preprocess OptEconomy String object. This class save the
  * String util player class;
  */
 public class OptEconomyString {
-
     private final OptEconomy instance;
     private String holder;
     private final Map<String, String> replaceMap = new HashMap<>();
@@ -95,17 +98,42 @@ public class OptEconomyString {
     }
 
     /**
-     *
      * @return the placeholder string
      */
     public String toStringWithPlaceholder(Player player) {
         return (instance.getAPIManager().isEnabled(OptEconomyConstants.PLUGIN_NAME_PLACEHOLDER_API))
                 ? PlaceholderAPI.setPlaceholders(player, this.holder)
-                : holder;
+                : privateReplacement(player);
     }
 
     /**
+     * Register the minimal holder for plugin.
      *
+     * @return the replaced string by player and input.
+     */
+    private String privateReplacement(Player player) {
+        Map<String, String> map1 = new HashMap<>();
+        // %opteconomy_points%
+        try {
+            map1.put("%opteconomy_points%",
+                    Objects.requireNonNull(this.getInstance().getPlayerStorageManager().get(player.getUniqueId()))
+                            .getBalance()
+                            .formatted("#.##"));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // %opteconomy_currency%
+        map1.put(
+                "%opteconomy_currency%",
+                this.getInstance().getSettingConfiguration().get(OptEconomySettingTemplate.GENERAL_POINT_CURRENCY)
+        );
+
+        return this.replace(map1).parse();
+    }
+
+    /**
      * @return instance of OptEconomy
      */
     public OptEconomy getInstance() {

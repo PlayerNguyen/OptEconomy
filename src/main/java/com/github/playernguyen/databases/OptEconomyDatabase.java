@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 public interface OptEconomyDatabase {
-
     /**
      * In database, these are many tables. Which table have a unique name to search.
      * The database set uses to store it as a data structure.

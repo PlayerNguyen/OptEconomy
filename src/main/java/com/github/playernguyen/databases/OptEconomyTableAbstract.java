@@ -4,12 +4,12 @@ import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class OptEconomyTableAbstract<T extends OptEconomyObject> implements OptEconomyTable<T> {
     private final String name;
-    private final Set<OptEconomyTableField> fieldSet = new TreeSet<>();
+    private final List<OptEconomyTableField> fieldSet = new ArrayList<>();
     private final OptEconomyDatabase database;
     private String primaryKey = null;
 
@@ -45,7 +45,7 @@ public abstract class OptEconomyTableAbstract<T extends OptEconomyObject> implem
     }
 
     @Override
-    public Set<OptEconomyTableField> getFieldSet() {
+    public List<OptEconomyTableField> getFieldSet() {
         return fieldSet;
     }
 
@@ -60,8 +60,8 @@ public abstract class OptEconomyTableAbstract<T extends OptEconomyObject> implem
      * @throws SQLException cannot execute the SQL
      */
     private void createTableNotExist() throws SQLException {
-        Preconditions.checkNotNull(getPrimaryKey(),
-                "The primary key must not be null. Set the primary key in loadField()");
+        // Preconditions.checkNotNull(getPrimaryKey(),
+        //        "The primary key must not be null. Set the primary key in loadField()");
         this.getDatabase().ready(String.format("CREATE TABLE IF NOT EXISTS %s (%s)",
                 this.name,
                 createQueryParameter()

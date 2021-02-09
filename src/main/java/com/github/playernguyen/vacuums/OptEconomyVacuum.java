@@ -13,7 +13,6 @@ import java.util.List;
  * This class is using to remove all redundant cache storage
  */
 public class OptEconomyVacuum {
-
     private final OptEconomy instance;
 
     public OptEconomyVacuum(OptEconomy instance) {
@@ -33,9 +32,14 @@ public class OptEconomyVacuum {
             // Remove otherwise
             Player bukkitPlayer = Bukkit.getPlayer(player.getUniqueId());
             if (bukkitPlayer == null) {
+                instance.getDebugger().info(String.format(
+                        "Put %s into trash list due to offline status",
+                        player.getUniqueId()
+                ));
                 trashList.add(player);
             } else {
-                this.instance.getPlayerManager().updatePlayer(player.getUniqueId());
+                System.out.println("Vacuum update player");
+                this.instance.getPlayerManager().update(player.getUniqueId());
             }
         }
         // Remove all trashes

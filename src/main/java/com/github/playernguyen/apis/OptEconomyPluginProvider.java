@@ -9,7 +9,6 @@ import org.bukkit.plugin.Plugin;
  * This class will provide API system to OptEconomy to depend on plugin
  */
 public abstract class OptEconomyPluginProvider {
-
     private final String pluginName;
     private boolean enabled = false;
 
@@ -74,7 +73,7 @@ public abstract class OptEconomyPluginProvider {
      *
      * @param instance the OptEconomy plugin instance
      */
-    public void onEnable(OptEconomy instance) {
+    public void onEnable(OptEconomy instance) throws PluginNotFoundException {
     }
 
     /**

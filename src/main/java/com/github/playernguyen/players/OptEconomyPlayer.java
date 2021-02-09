@@ -10,7 +10,6 @@ import java.util.UUID;
  * The player class represent the data of Player.
  */
 public class OptEconomyPlayer implements Comparable<OptEconomyPlayer>, OptEconomyObject {
-
     /**
      * The immutable identify for object
      */
@@ -38,6 +37,12 @@ public class OptEconomyPlayer implements Comparable<OptEconomyPlayer>, OptEconom
         this.lastUpdated = lastUpdate;
     }
 
+    public OptEconomyPlayer(UUID uniqueId, OptEconomyDouble balance) {
+        this.uniqueId = uniqueId;
+        this.balance = balance;
+        this.lastUpdated = System.currentTimeMillis();
+    }
+
     /**
      * Set a new balance to player
      *
@@ -45,6 +50,14 @@ public class OptEconomyPlayer implements Comparable<OptEconomyPlayer>, OptEconom
      */
     public void setBalance(OptEconomyDouble balance) {
         this.balance = balance;
+    }
+
+    /**
+     * Set balance via double variable
+     * @param d the amount of balance to set
+     */
+    public void setBalance(double d) {
+        this.setBalance(new OptEconomyDouble(d));
     }
 
     /**
@@ -74,11 +87,6 @@ public class OptEconomyPlayer implements Comparable<OptEconomyPlayer>, OptEconom
         return balance;
     }
 
-    @Override
-    public int compareTo(@NotNull OptEconomyPlayer o) {
-        return this.uniqueId.toString().compareTo(o.uniqueId.toString());
-    }
-
     /**
      * Get unique id of this player which immutable
      *
@@ -98,4 +106,17 @@ public class OptEconomyPlayer implements Comparable<OptEconomyPlayer>, OptEconom
         return new OptEconomyPlayer(player.getUniqueId(), player.getBalance(), player.getLastUpdated());
     }
 
+    @Override
+    public String toString() {
+        return "OptEconomyPlayer{" +
+                "uniqueId=" + uniqueId +
+                ", balance=" + balance +
+                ", lastUpdated=" + lastUpdated +
+                '}';
+    }
+
+    @Override
+    public int compareTo(@NotNull OptEconomyPlayer o) {
+        return this.uniqueId.toString().compareTo(o.uniqueId.toString());
+    }
 }

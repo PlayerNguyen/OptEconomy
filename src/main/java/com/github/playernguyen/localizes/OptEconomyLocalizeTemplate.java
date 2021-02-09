@@ -11,8 +11,30 @@ public enum  OptEconomyLocalizeTemplate implements OptEconomyTemplate {
     COMMAND_MAIN_COMMAND_DESCRIPTION("Command.OptEconomy.MainDescription", "The command of OptEconomy"),
     COMMAND_PARAMETER_COMMAND("Command.Parameter.Command", "command"),
 
-    COMMAND_PARAM_REQUIRED("Command.Param.Required", "Required"),
-    COMMAND_PARAM_NON_REQUIRED("Command.Param.Non-Required", "Non-Required"),
+    COMMAND_PARAM_REQUIRED("Command.Parameters.Required", "required"),
+    COMMAND_PARAM_NON_REQUIRED("Command.Parameters.Non-Required", "non-required"),
+
+    COMMAND_REQUIRE_PLAYER_SENDER("Command.RequirePlayerSender", "&cThis command is required player sender."),
+
+    COMMAND_ME_RESPONSE("Command.Me.Response", "&7You currently have &6%opteconomy_points% %opteconomy_currency% &7."),
+    COMMAND_ME_DESCRIPTION("Command.Me.Description", "Reveal the current balance of yourself"),
+
+    COMMAND_GIVE_DESCRIPTION("Command.Give.Description", "Bless points to players"),
+
+    COMMAND_SUB_COMMAND_NOT_FOUND("Command.SubCommandNotFound", "&cCommand not found."),
+
+    COMMAND_PARAM_TARGET("Command.Parameters.Target", "target"),
+    COMMAND_PARAM_AMOUNT("Command.Parameters.Amount", "amount"),
+    COMMAND_GIVE_RESPONSE_INVALID_ARGUMENTS("Command.Give.Response.InvalidArguments",
+            "&cInvalid arguments"),
+    COMMAND_GIVE_RESPONSE_PLAYER_NOT_FOUND("Command.Give.Response.PlayerNotFound",
+            "&cThis player are not existing on server, using &6/p offlinegive &cwhether you want to skip the valid step."),
+    COMMAND_GIVE_RESPONSE_INVALID_NUMBER_FORMAT("Command.Give.Response.ErrorNumberFormat",
+            "&cThe value must be a number, your input is invalid."),
+    COMMAND_GIVE_RESPONSE_USE_INTEGER("Command.Give.Response.UseInteger",
+            "&cThe value must be an integer."),
+    COMMAND_GIVE_RESPONSE_SQL_ERROR("Command.Give.Response.SQLError",
+            "&cThe connect to database server is down, please contact to admin for more information.")
 
     ;
 

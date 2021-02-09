@@ -42,7 +42,7 @@ public class OptEconomyPlayerListener extends OptEconomyAbstractListener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        // Whether quit, remove
+        // Whether quit, remove the player from cache and save it to database
         this.getInstance().getDebugger().info(String.format(
                 "Calling onQuit (%s)",
                 this.getClass().getSimpleName()

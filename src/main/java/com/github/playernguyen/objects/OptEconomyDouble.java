@@ -8,7 +8,6 @@ import java.text.DecimalFormat;
  * The double value holder with more essential
  */
 public class OptEconomyDouble {
-
     /**
      * Value as double will be hold.
      * This variable will be mutated
@@ -16,7 +15,7 @@ public class OptEconomyDouble {
     private double value;
 
     /**
-     * Initial of the class
+     * The construction with double value.
      *
      * @param value the start value
      */
@@ -25,7 +24,7 @@ public class OptEconomyDouble {
     }
 
     /**
-     * The value will be set to zero
+     * The construction without any value. The initially value will be set to 0
      */
     public OptEconomyDouble() {
         this.value = 0;
@@ -54,6 +53,7 @@ public class OptEconomyDouble {
 
     /**
      * Get the primitive double value
+     *
      * @return the primitive double value
      * @see Double
      */
@@ -68,5 +68,21 @@ public class OptEconomyDouble {
      */
     public static OptEconomyDouble zero() {
         return new OptEconomyDouble(0);
+    }
+
+    /**
+     * Check the current value is plural.
+     *
+     * @return whether the current value is plural (double) or not.
+     */
+    public boolean isPlural() {
+        return (this.toDouble() > 1);
+    }
+
+    @Override
+    public String toString() {
+        return "OptEconomyDouble{" +
+                "value=" + value +
+                '}';
     }
 }

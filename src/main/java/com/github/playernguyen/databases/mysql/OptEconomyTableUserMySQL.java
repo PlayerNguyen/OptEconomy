@@ -6,12 +6,11 @@ import com.github.playernguyen.databases.OptEconomyTableAbstract;
 import com.github.playernguyen.databases.OptEconomyTableFieldConstructor;
 import com.github.playernguyen.objects.OptEconomyDouble;
 import com.github.playernguyen.players.OptEconomyPlayer;
+import org.bukkit.Bukkit;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 public class OptEconomyTableUserMySQL extends OptEconomyTableAbstract<OptEconomyPlayer> {
@@ -23,7 +22,9 @@ public class OptEconomyTableUserMySQL extends OptEconomyTableAbstract<OptEconomy
     @Override
     protected void loadField() {
         // Register field
-        this.addField(new OptEconomyTableFieldConstructor("id", OptEconomyTableFieldTypeMySQL.INTEGER, 32));
+        this.addField(new OptEconomyTableFieldConstructor("id", OptEconomyTableFieldTypeMySQL.INTEGER, 32,
+                false, "AUTO_INCREMENT")
+        );
         this.addField(new OptEconomyTableFieldConstructor("username", OptEconomyTableFieldTypeMySQL.VARCHAR, 255));
         this.addField(new OptEconomyTableFieldConstructor("uuid", OptEconomyTableFieldTypeMySQL.VARCHAR, 255));
         this.addField(new OptEconomyTableFieldConstructor("balance", OptEconomyTableFieldTypeMySQL.VARCHAR, 32));
@@ -41,9 +42,10 @@ public class OptEconomyTableUserMySQL extends OptEconomyTableAbstract<OptEconomy
         while (response.next()) {
             // Create new object and add into list
             UUID uuid = UUID.fromString(response.getString("uuid"));
-            double money = response.getDouble("value");
+            double money = response.getDouble("balance");
 
-            OptEconomyPlayer player = new OptEconomyPlayer(uuid,
+            OptEconomyPlayer player = new OptEconomyPlayer(
+                    uuid,
                     new OptEconomyDouble(money),
                     System.currentTimeMillis()
             );
@@ -51,5 +53,14 @@ public class OptEconomyTableUserMySQL extends OptEconomyTableAbstract<OptEconomy
             responseList.add(player);
         }
         return responseList;
+    }
+
+    @Override
+    public Map<String, Object> redapt(OptEconomyPlayer object) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("username", Bukkit.getOfflinePlayer(object.getUniqueId()).getName());
+        map.put("uuid", object.getUniqueId().toString());
+        map.put("balance", object.getBalance().toDouble());
+        return map;
     }
 }

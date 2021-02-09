@@ -57,22 +57,10 @@ public class OptEconomySQLEstablishMySQL implements OptEconomySQLEstablish {
         return DriverManager.getConnection(url.toString(), username, password);
     }
 
-    public List<String> tableList() throws SQLException {
-        try (Connection connection = this.openConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("SHOW TABLES;");
-            ResultSet resultSet = preparedStatement.executeQuery();
-            List<String> list = new ArrayList<>();
-            // Iterate the resultSet then put to the table
-            while (resultSet.next()) {
-                list.add(resultSet.getString(1));
-            }
-            // Return a list
-            return list;
-        }
-    }
-
-    public String tableName() {
-        return instance.getSettingConfiguration().get(
-                OptEconomySettingTemplate.CONNECTION_TABLES_OPTECONOMY);
+    @Override
+    public String toString() {
+        return "OptEconomySQLEstablishMySQL{" +
+                "instance=" + instance +
+                '}';
     }
 }

@@ -10,13 +10,12 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 /**
- * Player manager list which storage cache data. Inheritance {@link OptEconomyManagerList}.
+ * Player manager is an cached which store cache data. Inheritance {@link OptEconomyManagerList}.
  */
-public class OptEconomyPlayerManager extends OptEconomyManagerList<OptEconomyPlayer> {
-
+public class OptEconomyPlayerCacheManager extends OptEconomyManagerList<OptEconomyPlayer> {
     private final OptEconomy instance;
 
-    public OptEconomyPlayerManager(OptEconomy instance) {
+    public OptEconomyPlayerCacheManager(OptEconomy instance) {
         super(new LinkedList<>());
         // Instance set up
         this.instance = instance;
@@ -43,8 +42,8 @@ public class OptEconomyPlayerManager extends OptEconomyManagerList<OptEconomyPla
             this.collection().add(player);
         } else {
             if ((System.currentTimeMillis() - player.getLastUpdated()) >
-                    Long.parseLong(instance.getSettingConfiguration().get(OptEconomySettingTemplate.CACHE_STORAGE_DURATION))) {
-                this.updatePlayer(uuid);
+                    (long) (int) instance.getSettingConfiguration().get(OptEconomySettingTemplate.CACHE_STORAGE_DURATION)) {
+                this.update(uuid);
             }
         }
         // Collection debugger
@@ -53,26 +52,16 @@ public class OptEconomyPlayerManager extends OptEconomyManagerList<OptEconomyPla
     }
 
     /**
-     * Get the player from manager list only.
-     *
-     * @param uuid
-     * @return
-     */
-    public OptEconomyPlayer getInCollection(UUID uuid) {
-        return this.collection().stream().filter(element -> element.getUniqueId().equals(uuid)).findAny().orElse(null);
-    }
-
-    /**
-     * Force OptEconomy to update player
+     * Get and replace a player in cache storage.
      *
      * @param uuid the player uuid
      * @throws SQLException throw whether cannot get player in data
      */
-    public void updatePlayer(UUID uuid) throws SQLException {
-        // Remove player
-        this.collection().removeIf(ele -> ele.getUniqueId().equals(uuid));
-        // Post new player
-        this.collection().add(instance.getPlayerStorageManager().get(uuid));
+    public void update(UUID uuid) throws SQLException {
+        // Remove out-of-date player
+        this.removePlayer(e -> e.getUniqueId().equals(uuid));
+        // And then push the new one again
+        this.collection().add(instance.getPlayerStorageManager().getNotNull(uuid));
     }
 
     /**
@@ -88,12 +77,12 @@ public class OptEconomyPlayerManager extends OptEconomyManagerList<OptEconomyPla
             throw new NullPointerException();
         }
         // Save the data
-        this.instance.getPlayerStorageManager().save(player);
+        this.instance.getPlayerStorageManager().saveAccount(player);
         return this.collection().remove(player);
     }
 
     /**
-     * Save and repove the player in collection using uuid (not predicate)
+     * Save and remove the player in collection using uuid (not predicate)
      *
      * @param uuid the uuid to be removed
      * @return whether removed or not
