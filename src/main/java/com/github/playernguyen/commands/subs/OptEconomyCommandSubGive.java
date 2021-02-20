@@ -6,6 +6,7 @@ import com.github.playernguyen.commands.OptEconomyCommandParameter;
 import com.github.playernguyen.commands.OptEconomyCommandResult;
 import com.github.playernguyen.commands.executors.OptEconomyCommandExecutor;
 import com.github.playernguyen.localizes.OptEconomyLocalizeTemplate;
+import com.github.playernguyen.loggers.OptEconomyExceptionCatcher;
 import com.github.playernguyen.settings.OptEconomySettingTemplate;
 import com.github.playernguyen.utils.OptEconomyNumberUtilities;
 import org.bukkit.Bukkit;
@@ -37,17 +38,19 @@ public class OptEconomyCommandSubGive extends OptEconomyCommandSub {
         // Invalid arguments; the args must not be null
         if (args.size() != 2) {
             sender.sendMessage(getInstance().getLocalizeConfiguration()
-                    .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_GIVE_RESPONSE_INVALID_ARGUMENTS).toString()
+                    .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_RESPONSE_INVALID_ARGUMENTS).toString()
             );
             return null;
         }
         // Pre-check the arguments
         String playerName = args.get(0);
-        Player player = Bukkit.getPlayer(playerName);
+        Player player = Bukkit.getServer().getPlayerExact(playerName);
         // Whether not found this player
         if (player == null) {
             sender.sendMessage(getInstance().getLocalizeConfiguration()
-                    .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_GIVE_RESPONSE_PLAYER_NOT_FOUND).toString()
+                    .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_GIVE_RESPONSE_PLAYER_NOT_FOUND)
+                    .replace("%player%", playerName)
+                    .toString()
             );
             return null;
         }
@@ -63,18 +66,49 @@ public class OptEconomyCommandSubGive extends OptEconomyCommandSub {
                     return null;
                 }
             }
+            // Whether lower than or equal 0
+            if (amount <= 0) {
+                sender.sendMessage(
+                        getInstance().getLocalizeConfiguration()
+                            .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_RESPONSE_INVALID_NUMBER_VALUE)
+                            .toString()
+                );
+                return null;
+            }
             // Other conditions
 
             // Change balance
-            new OptEconomyAPI(getInstance()).transact(player.getUniqueId(), amount);
+            boolean transactState = new OptEconomyAPI(getInstance()).transact(player.getUniqueId(), amount);
+            // Whether not changed (or not updated)
+            if (!transactState) {
+                sender.sendMessage(
+                        getInstance().getLocalizeConfiguration()
+                                .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_GIVE_RESPONSE_FAILED_TRANSACT)
+                                .replace("%player%", playerName)
+                                .toString()
+                );
+                return OptEconomyCommandResult.NULL;
+            }
+            // Otherwise
+            sender.sendMessage(
+                    getInstance().getLocalizeConfiguration()
+                            .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_GIVE_RESPONSE_SUCCEED_TRANSACT)
+                            .replace("%deposit%", stringAmount)
+                            .replace("%player%", playerName)
+                            .toString()
+            );
         } catch (NumberFormatException e) {
             sender.sendMessage(getInstance().getLocalizeConfiguration()
-                .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_GIVE_RESPONSE_INVALID_NUMBER_FORMAT).toString()
+                .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_RESPONSE_INVALID_NUMBER_FORMAT).toString()
             );
+            // throw the debug
+            // OptEconomyExceptionCatcher.stackTrace(e);
         } catch (SQLException e) {
             sender.sendMessage(getInstance().getLocalizeConfiguration()
-                    .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_GIVE_RESPONSE_SQL_ERROR).toString()
+                    .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_RESPONSE_SQL_ERROR).toString()
             );
+            // throw the debug
+            OptEconomyExceptionCatcher.stackTrace(e);
         }
         return null;
     }

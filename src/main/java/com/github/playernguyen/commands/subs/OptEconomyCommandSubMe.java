@@ -1,13 +1,14 @@
 package com.github.playernguyen.commands.subs;
 
 import com.github.playernguyen.OptEconomy;
-import com.github.playernguyen.commands.OptEconomyCommandParameter;
 import com.github.playernguyen.commands.OptEconomyCommandResult;
 import com.github.playernguyen.commands.executors.OptEconomyCommandExecutor;
 import com.github.playernguyen.localizes.OptEconomyLocalizeTemplate;
+import com.github.playernguyen.players.OptEconomyPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -19,7 +20,8 @@ public class OptEconomyCommandSubMe extends OptEconomyCommandSub {
                                   String description,
                                   OptEconomyCommandExecutor executor,
                                   List<String> aliases) {
-        super(instance,
+        super(
+                instance,
                 name,
                 description,
                 executor,
@@ -42,11 +44,18 @@ public class OptEconomyCommandSubMe extends OptEconomyCommandSub {
             );
         } else {
             // Response a player ~
-            sender.sendMessage(
-                    getInstance().getLocalizeConfiguration()
-                            .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_ME_RESPONSE)
-                            .toStringWithPlaceholder((Player) sender)
-            );
+            try {
+                OptEconomyPlayer player = OptEconomy.api().getPlayer(((Player) sender).getUniqueId());
+                sender.sendMessage(
+                        getInstance().getLocalizeConfiguration()
+                                .prefixedColor(OptEconomyLocalizeTemplate.COMMAND_ME_RESPONSE)
+                                .replace("%point%", player.getBalance().formatted("#.##"))
+                                .replace()
+                                .toStringWithPlaceholder((Player) sender)
+                );
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

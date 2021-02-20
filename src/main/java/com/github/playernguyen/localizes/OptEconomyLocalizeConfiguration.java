@@ -72,8 +72,7 @@ public class OptEconomyLocalizeConfiguration extends OptEconomyConfiguration<Opt
 
     @Override
     public @Nullable String get(@NotNull OptEconomyLocalizeTemplate key) {
-        return (String) super.get(key);
+        return super.get(key);
     }
-
 
 }

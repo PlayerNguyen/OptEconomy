@@ -2,6 +2,7 @@ package com.github.playernguyen.apis;
 
 import com.github.playernguyen.OptEconomy;
 import com.github.playernguyen.loggers.OptEconomyExceptionCatcher;
+import com.github.playernguyen.players.OptEconomyPlayer;
 import com.github.playernguyen.settings.OptEconomySettingTemplate;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
@@ -40,7 +41,11 @@ public class OptEconomyPlaceholderAPIExpansion extends PlaceholderExpansion {
         // %opteconomy_points%
         if (params.equals("points")) {
             try {
-                return instance.getPlayerManager().get(player.getUniqueId()).getBalance()
+                OptEconomyPlayer optEconomyPlayer = instance.getPlayerManager().getPlayer(player.getUniqueId());
+                if (optEconomyPlayer == null) {
+                    throw new NullPointerException();
+                }
+                return optEconomyPlayer.getBalance()
                         .formatted("#.##");
             } catch (SQLException e) {
                 OptEconomyExceptionCatcher.stackTrace(e);
@@ -49,7 +54,10 @@ public class OptEconomyPlaceholderAPIExpansion extends PlaceholderExpansion {
         // %opteconomy_default_points%
         if (params.equals("default_points")) {
             try {
-                return instance.getPlayerManager().get(player.getUniqueId()).getBalance()
+                OptEconomyPlayer optEconomyPlayer = instance.getPlayerManager().getPlayer(player.getUniqueId());
+                if (optEconomyPlayer == null)
+                    throw new NullPointerException();
+                return optEconomyPlayer.getBalance()
                         .formatted("#.##");
             } catch (SQLException e) {
                 return "0";

@@ -23,8 +23,8 @@ public enum OptEconomySettingTemplate implements OptEconomyTemplate {
     GENERAL_STORAGE_TYPE("General.StorageType", OptEconomyStorageType.SQLITE.getName()),
     GENERAL_SQLITE_FILENAME("General.SQLite.Filename", "Data.db"),
     GENERAL_LANGUAGE_FILE_NAME("General.LanguageFileName", "Language.yml"),
-    GENERAL_USING_INTEGER("General.UsingInteger", "false"),
-    GENERAL_POINT_CURRENCY("General.PointCurrency.Single", "coin"),
+    GENERAL_USING_INTEGER("General.UsingInteger", false),
+    GENERAL_POINT_CURRENCY("General.PointCurrency", "coin"),
     // Options
     CACHE_STORAGE_DURATION("CacheStorageDuration", 500L),
 //    VACUUM_CACHE_UPDATE_DURATION("Vacuum.Duration", 500L),

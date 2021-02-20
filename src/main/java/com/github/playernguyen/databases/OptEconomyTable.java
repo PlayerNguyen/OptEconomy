@@ -169,7 +169,16 @@ public interface OptEconomyTable<T extends OptEconomyObject> extends Comparable<
         return ready.executeUpdate() == 1;
     }
 
-    default void update(T object, String where, String ...alternative) throws SQLException {
+    /**
+     * Update items into table via structure in the redapt of {@link T} object
+     *
+     * @param object      the object to be updated
+     * @param where       at where, condition of existed object
+     * @param alternative the alternative (replacement) list whereas building queries
+     * @return true whether item was updated, otherwise false
+     * @throws SQLException exception related to SQL connections, queries, etc...
+     */
+    default boolean update(T object, String where, String... alternative) throws SQLException {
         Map<String, Object> redapt = redapt(object);
         // Build queries
         StringBuilder query = new StringBuilder();
@@ -177,19 +186,24 @@ public interface OptEconomyTable<T extends OptEconomyObject> extends Comparable<
         while (iterator.hasNext()) {
             String next = iterator.next();
             query.append(next).append("=?");
-
+            // Whether not end. put comma
             if (iterator.hasNext()) {
                 query.append(", ");
             }
         }
+        ArrayList<Object> objects = new ArrayList<>(redapt.values());
+        objects.addAll(Arrays.asList(alternative));
         // End queries
-        this.getDatabase().ready(
+        PreparedStatement preparedStatement = this.getDatabase().ready(
                 String.format(
-                        "UPDATE %s SET %s WHERE " + where,
+                        "UPDATE %s SET %s WHERE %s",
                         this.getName(),
                         query.toString(),
                         where
-                ), Collections.singletonList(new ArrayList<>(redapt.values()).addAll(Arrays.asList(alternative)))
+                ), objects
         );
+
+        // Whether the item was updated
+        return preparedStatement.executeUpdate() == 1;
     }
 }

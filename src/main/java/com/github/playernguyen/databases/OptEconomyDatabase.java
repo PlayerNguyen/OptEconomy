@@ -2,6 +2,7 @@ package com.github.playernguyen.databases;
 
 import com.github.playernguyen.OptEconomy;
 import com.github.playernguyen.establishs.OptEconomySQLEstablish;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -70,7 +71,7 @@ public interface OptEconomyDatabase {
      * @return the prepared statement
      * @throws SQLException whether cannot use SQL.
      */
-    default PreparedStatement ready(String query, List<Object> args) throws SQLException {
+    default PreparedStatement ready(String query, @Nullable List<Object> args) throws SQLException {
         Connection connection = this.getEstablish().openConnection();
         this.getPlugin().getDebugger().info("Generate query " + query);
         PreparedStatement statement = connection.prepareStatement(query);

@@ -7,6 +7,7 @@ import com.github.playernguyen.commands.OptEconomyCommandResult;
 import com.github.playernguyen.commands.subs.OptEconomyCommandSub;
 import com.github.playernguyen.commands.subs.OptEconomyCommandSubGive;
 import com.github.playernguyen.commands.subs.OptEconomyCommandSubMe;
+import com.github.playernguyen.commands.subs.OptEconomyCommandSubTake;
 import com.github.playernguyen.localizes.OptEconomyLocalizeTemplate;
 import org.bukkit.command.CommandSender;
 
@@ -51,6 +52,15 @@ public class OptEconomyCommandOptEconomy extends OptEconomyCommandExecutor {
                 this,
                 Collections.singletonList("g")
         ));
+        // points take
+        this.registerSubCommand(new OptEconomyCommandSubTake(
+                instance,
+                "take",
+                instance.getLocalizeConfiguration().raw(OptEconomyLocalizeTemplate.COMMAND_TAKE_DESCRIPTION)
+                        .toString(),
+                this,
+                Collections.singletonList("t")
+        ));
     }
 
     @Override
@@ -90,7 +100,7 @@ public class OptEconomyCommandOptEconomy extends OptEconomyCommandExecutor {
             return null;
         }
         // Return the sub command execute
-        return subCommand.execute(sender, args.subList(0, args.size() - 1));
+        return subCommand.execute(sender, args.subList(1, args.size()));
     }
 
     @Override

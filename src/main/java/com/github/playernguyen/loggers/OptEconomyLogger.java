@@ -14,12 +14,23 @@ public class OptEconomyLogger {
     private static final String PREFIX = OptEconomyConstants.LOGGER_PREFIX;
 
     /**
-     * Function to print a string out. This is private access function
+     * Function to print a string out.
      * @param string a string to print
      */
-    private void print(String string) {
+    public void print(String string) {
         Bukkit.getConsoleSender().sendMessage(
             ChatColor.translateAlternateColorCodes('&', PREFIX + string)
+        );
+    }
+
+    /**
+     * Function to print a string without prefix.
+     *
+     * @param string a string to print
+     */
+    public void printWithoutPrefix(String string) {
+        Bukkit.getConsoleSender().sendMessage(
+                ChatColor.translateAlternateColorCodes('&', string)
         );
     }
 

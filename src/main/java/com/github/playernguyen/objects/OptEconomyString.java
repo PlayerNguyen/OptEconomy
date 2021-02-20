@@ -30,6 +30,12 @@ public class OptEconomyString {
                             String holder) {
         this.instance = instance;
         this.holder = holder;
+        // Global register
+        this.replace(
+                "%currency%",
+                instance.getSettingConfiguration().get(OptEconomySettingTemplate.GENERAL_POINT_CURRENCY)
+        );
+
     }
 
     /**
@@ -47,9 +53,9 @@ public class OptEconomyString {
      */
     private String parse() {
         for (Map.Entry<String, String> stringEntry : replaceMap.entrySet()) {
-            holder = holder.replace(stringEntry.getKey(), stringEntry.getValue());
+            this.holder = holder.replace(stringEntry.getKey(), stringEntry.getValue());
         }
-        return holder;
+        return this.holder;
     }
 
     /**
@@ -102,12 +108,12 @@ public class OptEconomyString {
      */
     public String toStringWithPlaceholder(Player player) {
         return (instance.getAPIManager().isEnabled(OptEconomyConstants.PLUGIN_NAME_PLACEHOLDER_API))
-                ? PlaceholderAPI.setPlaceholders(player, this.holder)
+                ? PlaceholderAPI.setPlaceholders(player, this.parse())
                 : privateReplacement(player);
     }
 
     /**
-     * Register the minimal holder for plugin.
+     * Register the minimal placeholder for plugin.
      *
      * @return the replaced string by player and input.
      */
@@ -116,7 +122,7 @@ public class OptEconomyString {
         // %opteconomy_points%
         try {
             map1.put("%opteconomy_points%",
-                    Objects.requireNonNull(this.getInstance().getPlayerStorageManager().get(player.getUniqueId()))
+                    Objects.requireNonNull(this.getInstance().getPlayerManager().getPlayer(player.getUniqueId()))
                             .getBalance()
                             .formatted("#.##"));
 

@@ -1,5 +1,6 @@
 package com.github.playernguyen;
 
+import com.github.playernguyen.apis.OptEconomyAPI;
 import com.github.playernguyen.apis.OptEconomyAPIManager;
 import com.github.playernguyen.apis.OptEconomyPluginPlaceholderAPI;
 import com.github.playernguyen.commands.OptEconomyCommandExecutorManager;
@@ -19,18 +20,13 @@ import com.github.playernguyen.listeners.OptEconomyPlayerListener;
 import com.github.playernguyen.localizes.OptEconomyLocalizeConfiguration;
 import com.github.playernguyen.loggers.OptEconomyExceptionCatcher;
 import com.github.playernguyen.loggers.OptEconomyLogger;
-import com.github.playernguyen.players.OptEconomyPlayerCacheManager;
-import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManager;
-import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManagerMySQL;
-import com.github.playernguyen.players.storages.OptEconomyPlayerStorageManagerSQLite;
-import com.github.playernguyen.runnables.OptEconomyRunnableVacuum;
+import com.github.playernguyen.players.storages.OptEconomyPlayerManager;
+import com.github.playernguyen.players.storages.OptEconomyPlayerManagerMySQL;
+import com.github.playernguyen.players.storages.OptEconomyPlayerManagerSQLite;
 import com.github.playernguyen.settings.OptEconomySettingConfiguration;
 import com.github.playernguyen.settings.OptEconomySettingTemplate;
 import com.github.playernguyen.storages.OptEconomyStorageType;
-import com.github.playernguyen.vacuums.OptEconomyVacuum;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -50,11 +46,9 @@ public final class OptEconomy extends JavaPlugin {
     private OptEconomySQLEstablish establish;
     private OptEconomyLocalizeConfiguration localizeConfiguration;
     private OptEconomyDatabase database;
-    private OptEconomyPlayerStorageManager playerStorageManager;
-    private OptEconomyPlayerCacheManager playerManager;
+    private OptEconomyPlayerManager playerManager;
     private OptEconomyListenerManager listenerManager;
     private OptEconomyAPIManager APIManager;
-    private OptEconomyRunnableVacuum runnableVacuum;
     private OptEconomyCommandExecutorManager executorManager;
 
     /**
@@ -107,6 +101,7 @@ public final class OptEconomy extends JavaPlugin {
 
     /**
      * Dependencies set up
+     *
      * @throws PluginNotFoundException whether not found the plugin
      */
     private void setupDependencies() throws PluginNotFoundException {
@@ -127,7 +122,13 @@ public final class OptEconomy extends JavaPlugin {
      */
     private void setupLogger() {
         this.logger = new OptEconomyLogger();
-        this.logger.good(ChatColor.AQUA + "OptEconomy v." + this.getDescription().getVersion());
+//        this.logger.good(ChatColor.AQUA + "OptEconomy v." + this.getDescription().getVersion());
+        this.logger.printWithoutPrefix(" ");
+        this.logger.printWithoutPrefix("  &7|-------| ");
+        this.logger.printWithoutPrefix("  &7| x   x |  &6OptEconomy &cv" + this.getDescription().getVersion());
+        this.logger.printWithoutPrefix("  &7| |   | |  &cby Player_Nguyen. ");
+        this.logger.printWithoutPrefix("  &7|-------| ");
+        this.logger.printWithoutPrefix(" ");
     }
 
     /**
@@ -160,38 +161,52 @@ public final class OptEconomy extends JavaPlugin {
      */
     private void setupPlayers() throws SQLException {
         this.getOptLogger().normal("Loading player manager...");
-        // Player storage manager set up
-        if (playerStorageManager == null) {
+//        // Player storage manager set up
+//        if (playerStorageManager == null) {
+//            switch (getStorageType()) {
+//                case MYSQL: {
+//                    this.playerStorageManager = new OptEconomyPlayerManagerMySQL(this, this.getDatabase());
+//                    break;
+//                }
+//                case SQLITE: {
+//                    this.playerStorageManager = new OptEconomyPlayerManagerSQLite(this, this.getDatabase());
+//                    break;
+//                }
+//            }
+//        }
+//
+//        // Player manager set up
+//        if (playerManager == null) {
+//            this.playerManager = new OptEconomyPlayerCacheManager(this);
+//        } else {
+//            playerManager.collection().clear();
+//        }
+//        // Refresh the online player
+//        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+//            this.getOptLogger().info(String.format("Retrieving data from player %s", onlinePlayer.getUniqueId()));
+//            playerManager.get(onlinePlayer.getUniqueId());
+//        }
+        if (playerManager == null) {
             switch (getStorageType()) {
                 case MYSQL: {
-                    this.playerStorageManager = new OptEconomyPlayerStorageManagerMySQL(this, this.getDatabase());
+                    this.playerManager = new OptEconomyPlayerManagerMySQL(this, getDatabase());
                     break;
                 }
                 case SQLITE: {
-                    this.playerStorageManager = new OptEconomyPlayerStorageManagerSQLite(this, this.getDatabase());
+                    this.playerManager = new OptEconomyPlayerManagerSQLite(this, getDatabase());
                     break;
                 }
+                default:
+                    throw new UnsupportedOperationException();
             }
-        }
-
-        // Player manager set up
-        if (playerManager == null) {
-            this.playerManager = new OptEconomyPlayerCacheManager(this);
-        } else {
-            playerManager.collection().clear();
-        }
-        // Refresh the online player
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            this.getOptLogger().info(String.format("Retrieving data from player %s", onlinePlayer.getUniqueId()));
-            playerManager.get(onlinePlayer.getUniqueId());
         }
     }
 
     /**
-     * Set up the database of plugin
+     * Set up the database of plugin.
      *
-     * @throws InvalidStorageTypeException The storage not found
-     * @throws SQLException                the SQL cannot be connected
+     * @throws InvalidStorageTypeException The storage not found.
+     * @throws SQLException                the SQL cannot be connected.
      */
     private void setupDatabases() throws InvalidStorageTypeException, SQLException {
         this.getOptLogger().normal("Loading database data...");
@@ -213,7 +228,8 @@ public final class OptEconomy extends JavaPlugin {
                     this.database = new OptEconomyDatabaseMySQL(this, this.establish);
                     break;
                 }
-                default: throw new UnsupportedOperationException("Invalid database construction <?>");
+                default:
+                    throw new UnsupportedOperationException("Invalid database construction <?>");
             }
         }
     }
@@ -290,8 +306,6 @@ public final class OptEconomy extends JavaPlugin {
      * @return the current instance of OptEconomy
      */
     public static OptEconomy inst() {
-//        System.out.println("[OptEconomy] " +
-//                "Some plugin call OptEconomy outside (leaking databases information warning)");
         return instance;
     }
 
@@ -340,12 +354,12 @@ public final class OptEconomy extends JavaPlugin {
     }
 
     /**
-     * Get storage manager of Player which linked to the server
+     * Player manager class request and receive data on SQL server.
      *
-     * @return the storage manager of player which linked to the server
+     * @return the {@link OptEconomyPlayerManager} class
      */
-    public OptEconomyPlayerStorageManager getPlayerStorageManager() {
-        return playerStorageManager;
+    public OptEconomyPlayerManager getPlayerManager() {
+        return playerManager;
     }
 
     /**
@@ -355,15 +369,6 @@ public final class OptEconomy extends JavaPlugin {
      */
     public OptEconomyDebugger getDebugger() {
         return debugger;
-    }
-
-    /**
-     * Player manager class to manage player cache and downloaded player
-     *
-     * @return the manager class of player
-     */
-    public OptEconomyPlayerCacheManager getPlayerManager() {
-        return playerManager;
     }
 
     /**
@@ -380,5 +385,14 @@ public final class OptEconomy extends JavaPlugin {
      */
     public OptEconomyAPIManager getAPIManager() {
         return APIManager;
+    }
+
+    /**
+     * Static method to get api of OptEconomy
+     *
+     * @return the {@link OptEconomyAPI} class use for development.
+     */
+    public static OptEconomyAPI api() {
+        return new OptEconomyAPI(OptEconomy.inst());
     }
 }

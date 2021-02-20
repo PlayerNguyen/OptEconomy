@@ -23,7 +23,8 @@ public class OptEconomyAPIManager extends OptEconomyManagerAbstractMap<String, O
     public void register(String name, OptEconomyPluginProvider provider) {
         instance.getDebugger().info(String.format("Adding %s (%s)",
                 provider.toString(),
-                provider.getClass().getSimpleName()));
+                provider.getClass().getSimpleName())
+        );
         this.map().put(name, provider);
     }
 
